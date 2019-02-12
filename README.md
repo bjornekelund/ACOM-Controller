@@ -16,4 +16,4 @@ you only need to execute the app once with a command line argument
 to set the COM port. This can be done from e.g. the Windows Command 
 window or Power Shell. 
 
-For more information, check www.sm7iun.se
+For more information, see www.sm7iun.se
