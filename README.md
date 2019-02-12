@@ -1,4 +1,4 @@
-#ACOM Controller
+# ACOM Controller
 Minimalistic WPF application for controlling an ACOM 600S from the 
 PC desktop via its RS-232 remote control interface. 
 
