@@ -7,48 +7,42 @@ using ACOM_Controller.Properties;
 
 namespace ACOM_Controller
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        public static string ComPort; 
+        string ComPort; 
 
-        public static byte msglen = 72;
-        public static byte[] msg = new byte[msglen];
-        public static byte msgpos = 0;
-        public static bool parsing = false; // true while receiving a message
+        const byte msglen = 72;
+        byte[] msg = new byte[msglen];
+        byte msgpos = 0;
+        bool parsing = false; // true while receiving a message
 
-        public static byte[] CommandEnableTelemetry = new byte[] { 0x55, 0x92, 0x04, 0x15 };
-        public static byte[] CommandDisableTelemetry = new byte[] { 0x55, 0x91, 0x04, 0x16 };
+        readonly byte[] CommandEnableTelemetry = new byte[] { 0x55, 0x92, 0x04, 0x15 };
+        readonly byte[] CommandDisableTelemetry = new byte[] { 0x55, 0x91, 0x04, 0x16 };
 
-        public static byte[] CommandOperate = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x06, 0x00, 0x1A };
-        public static byte[] CommandStandby = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x05, 0x00, 0x1B };
-        public static byte[] CommandOff = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x0A, 0x00, 0x16 };
+        readonly byte[] CommandOperate = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x06, 0x00, 0x1A };
+        readonly byte[] CommandStandby = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x05, 0x00, 0x1B };
+        readonly byte[] CommandOff = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x0A, 0x00, 0x16 };
 
-        public static string[] BandName = new string[16] { "?m", "160m", "80m", "40/60m", "30m", "20m", "17m", "15m", "12m", "10m", "6m", "?m", "?m", "?m", "?m", "?m"};
+        readonly string[] BandName = new string[16] { "?m", "160m", "80m", "40/60m", "30m", "20m", "17m", "15m", "12m", "10m", "6m", "?m", "?m", "?m", "?m", "?m"};
 
-        public static int PAstatus = 0;
-        public static int PAband = 0;
-        public static int PALPF = 0;
-        public static int PAtemp = 0; // PA temperature
-        public static int PAfan = 0; // PAM fan state, 0 = off
+        int PAstatus = 0;
+        int PAtemp = 0; // PA temperature
+        int PAfan = 0; // PAM fan state, 0 = off
 
-        public static int PApowerPeakMemory = 10;
-        public static int PApowerPeakIndex = 0; 
-        public static float[] PApower = new float[PApowerPeakMemory]; // Array for filtering PA power reports
-        public static float PApowerCurrent; // Current PA power
-        public static float PApowerDisplay = 0; // Filtered PA output power
+        const int PApowerPeakMemory = 10;
+        int PApowerPeakIndex = 0; 
+        float[] PApower = new float[PApowerPeakMemory]; // Array for filtering PA power reports
+        float PApowerCurrent; // Current PA power
+        float PApowerDisplay = 0; // Filtered PA output power
 
-        public static int DrivePowerPeakMemory = 10;
-        public static int DrivePowerPeakIndex = 0;
-        public static float[] DrivePower = new float[DrivePowerPeakMemory]; // Array for filtering PA power reports
-        public static float DrivePowerCurrent; // Current PA power
-        public static float DrivePowerDisplay = 0; // Filtered PA output power
+        const int DrivePowerPeakMemory = 10;
+        int DrivePowerPeakIndex = 0;
+        float[] DrivePower = new float[DrivePowerPeakMemory]; // Array for filtering PA power reports
+        float DrivePowerCurrent; // Current PA power
+        float DrivePowerDisplay = 0; // Filtered PA output power
 
         SerialPort port;
         
-
         public MainWindow()
         {
             String[] commandLineArguments = Environment.GetCommandLineArgs();
@@ -66,7 +60,7 @@ namespace ACOM_Controller
             port = new SerialPort(ComPort, 9600, Parity.None, 8, StopBits.One);
 
             OpenSerial();
-            EnableTelemetry();
+            port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
 
             // Fetch window location from saved settings
             this.Top = Settings.Default.Top;
@@ -95,16 +89,6 @@ namespace ACOM_Controller
             // Remember COM port used 
             Settings.Default.ComPort = ComPort;
 
-            DisableTelemetry();
-        }
-
-        void EnableTelemetry()
-        {
-            port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
-        }
-
-        void DisableTelemetry()
-        {
             port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
         }
 
@@ -304,8 +288,8 @@ namespace ACOM_Controller
         void OnTimer(object sender, EventArgs e)
         {
             // Re-enable telemetry every timer click to ensure status info after startup
-            EnableTelemetry();
+            port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
         }
-     }
+    }
 }
 
