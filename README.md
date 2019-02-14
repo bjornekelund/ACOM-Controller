@@ -1,7 +1,8 @@
 # ACOM Controller
 
-Minimalistic WPF application for controlling an *ACOM 600S* from the
-PC desktop via its RS-232 remote control interface.
+Minimalistic WPF application for controlling and monitoring an *ACOM 600S* 
+shortwave power amplifier from the PC desktop via its RS-232 remote control 
+interface.
 
 Consumes very little screen real estate and easily be
 modified to consume even less. Also easily modifiable for
