@@ -16,14 +16,15 @@
         <GroupBox Header="Band" HorizontalAlignment="Left" Height="42" Margin="139,30,0,0" VerticalAlignment="Top" Width="65">
             <Label x:Name="bandLabel" Content="??m" HorizontalAlignment="Center" Height="27" Margin="-3,-6,-3,-2" VerticalAlignment="Center" Width="59" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Center" FontSize="14"/>
         </GroupBox>
-        <ProgressBar x:Name="tempBar" HorizontalAlignment="Left" Height="25" Margin="292,5,0,0" VerticalAlignment="Top" Width="161" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Value="50"/>
-        <ProgressBar x:Name="pwrBar" HorizontalAlignment="Left" Height="25" Margin="292,42,0,0" VerticalAlignment="Top" Width="161" Maximum="700" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Value="350"/>
+        <ProgressBar x:Name="tempBar" HorizontalAlignment="Left" Height="25" Margin="292,5,0,0" VerticalAlignment="Top" Width="160" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Value="50"/>
+        <ProgressBar x:Name="pwrBar" HorizontalAlignment="Left" Height="25" Margin="292,42,0,0" VerticalAlignment="Top" Width="137" Maximum="600" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Value="350"/>
         <Label x:Name="tempLabel" Content="?C" HorizontalAlignment="Left" Margin="458,5,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="41"/>
         <Label x:Name="pwrLabel" Content="?W" HorizontalAlignment="Left" Margin="458,42,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="41"/>
         <Label x:Name="fanLabel" Content="Fan ?" HorizontalAlignment="Left" Height="20" Margin="393,8,0,0" VerticalAlignment="Top" Width="56" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontWeight="Bold"/>
         <GroupBox Header="Drive" HorizontalAlignment="Left" Height="42" Margin="209,30,0,0" VerticalAlignment="Top" Width="72">
             <Label x:Name="driveLabel" Content="??W" HorizontalAlignment="Center" Height="28" Margin="0,-6,1,-2" VerticalAlignment="Center" Width="59" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Center" FontSize="14"/>
         </GroupBox>
+        <ProgressBar x:Name="pwrBar_Peak" HorizontalAlignment="Left" Height="25" Margin="429,42,0,0" VerticalAlignment="Top" Width="23" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
 
     </Grid>
 </Window>

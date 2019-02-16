@@ -245,8 +245,12 @@ namespace ACOM_Controller
                                         PApowerDisplay = PApower.Max();
                                         if (PApowerPeakIndex >= PApowerPeakMemory) PApowerPeakIndex = 0;  // wrap around
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
-                                        pwrBar.Value = (int)PApowerDisplay;
+
+                                        pwrBar.Value = (PApowerDisplay > 600f) ? 600 : (int)PApowerDisplay;
                                         pwrBar.Foreground = Brushes.RoyalBlue;
+
+                                        pwrBar_Peak.Value = (PApowerDisplay > 600f) ? (int)PApowerDisplay - 600 : 0;
+                                        pwrBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Show active LPF as text
                                         bandLabel.Content = BandName[msg[69] & 0x0F];  
