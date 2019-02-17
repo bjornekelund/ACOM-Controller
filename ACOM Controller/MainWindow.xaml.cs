@@ -49,7 +49,7 @@ namespace ACOM_Controller
 
             InitializeComponent();
 
-            // If there is a command line argument, take it as the COM port 
+            // If there is a command line argument, take it as the COM port, else use same as last time
             if (commandLineArguments.Length > 1)
                 ComPort = commandLineArguments[1].ToUpper();
             else
@@ -60,26 +60,30 @@ namespace ACOM_Controller
             port = new SerialPort(ComPort, 9600, Parity.None, 8, StopBits.One);
 
             OpenSerial();
+            // Send enable telemetry command to PA
             port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
 
             // Fetch window location from saved settings
             this.Top = Settings.Default.Top;
             this.Left = Settings.Default.Left;
 
-            // Clearing peak detection array, just to be on the safe side
+            // Clearing peak detection arrays, just to be safe
             Array.Clear(PApower, 0, PApower.Length);
+            Array.Clear(DrivePower, 0, DrivePower.Length);
 
-            // Enable event handler for data received
+            // Enable event handler for serial data received
             port.DataReceived += Port_OnReceiveData; // DataReceived Event Handler
 
-            // Set up timer with 1s period for brute-force re-enabling telemetry mode after power on
+            // Since there is no way to know if telemetry is enabled on PA, 
+            // use a periodic timer to constantly re-enable telemetry
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(OnTimer);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 2000);
             dispatcherTimer.Start();
         }
 
-        void MainWindow_Closed(object sender, EventArgs e) // Executes at shut down
+        // Clean up and housekeeping at program shutdown
+        void MainWindow_Closed(object sender, EventArgs e) 
         {
             // Remember window location 
             Settings.Default.Top = this.Top;
@@ -89,9 +93,11 @@ namespace ACOM_Controller
             // Remember COM port used 
             Settings.Default.ComPort = ComPort;
 
+            // Send disable telemetry command to PA
             port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
         }
 
+        // Safely open serial port and throw a popup if fails
         void OpenSerial()
         {
             try
@@ -108,14 +114,20 @@ namespace ACOM_Controller
             }
         }
 
+        // Event handler for received data
         private void Port_OnReceiveData(object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPort spL = (SerialPort)sender;
-            byte[] buf = new byte[spL.BytesToRead];
-            spL.Read(buf, 0, buf.Length);
+            SerialPort _port = (SerialPort)sender;
+            byte[] buf = new byte[_port.BytesToRead];
+            _port.Read(buf, 0, buf.Length);
+
             foreach (Byte b in buf)
             {
-                // parse 
+                // Known weakness of solution below:
+                // If there are other, non-telemetry, datagrams present in the data stream 
+                // there could be false triggers if they contain the sequence 0x55 0x2f
+                // Complete safety is only achieved by making parser aware of all 
+                // possible datagrams. 
                 if (!parsing & (b == 0x55)) // 0x55 is start of telemetry message
                 {
                     msgpos = 0;
@@ -130,7 +142,6 @@ namespace ACOM_Controller
                     {
                         msgpos = 0;
                         parsing = false;
-
                     }
                     else // A telemetry message 
                     {
@@ -145,7 +156,7 @@ namespace ACOM_Controller
                             {
                                 PAstatus = (msg[3] & 0xF0) >> 4; // extract data from message
 
-                                // Do UI updates in main thread
+                                // Updates to UI needs to be done in main thread
                                 Application.Current.Dispatcher.Invoke(new Action(() =>
                                 {
                                     switch (PAstatus)
@@ -196,7 +207,7 @@ namespace ACOM_Controller
                                     PAtemp = msg[16] + msg[17] * 256 - 273; // extract data from message
                                     PAfan = (msg[69] & 0xF0) >> 4;
 
-                                    if (PAstatus != 10)
+                                    if (PAstatus != 10) // PAstatus == 10 means in powering down mode
                                     {
                                         if (PAtemp >= 0 & PAtemp <= 100) // safety for corrupted reads
                                         {
@@ -204,6 +215,7 @@ namespace ACOM_Controller
                                             tempBar.Value = PAtemp;
                                         }
 
+                                        // Change color on temp bar on higher fan speeds
                                         switch (PAfan)
                                         {
                                             case 1:
@@ -240,22 +252,25 @@ namespace ACOM_Controller
                                         driveLabel.Content = DrivePowerDisplay.ToString("0") + "W";
 
                                         // Filter output power data 
+                                        // Add 2% to align better with PA's own display, unclear why
                                         PApowerCurrent = 1.02f * (msg[22] + msg[23] * 256);
                                         PApower[PApowerPeakIndex++] = PApowerCurrent; // save current power in fifo
                                         PApowerDisplay = PApower.Max();
                                         if (PApowerPeakIndex >= PApowerPeakMemory) PApowerPeakIndex = 0;  // wrap around
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
+                                        // 0-600W part of the bar in blue
                                         pwrBar.Value = (PApowerDisplay > 600f) ? 600 : (int)PApowerDisplay;
                                         pwrBar.Foreground = Brushes.RoyalBlue;
 
+                                        // 600-700W part of the bar in red
                                         pwrBar_Peak.Value = (PApowerDisplay > 600f) ? (int)PApowerDisplay - 600 : 0;
                                         pwrBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Show active LPF as text
                                         bandLabel.Content = BandName[msg[69] & 0x0F];  
                                     }
-                                    else // PA is off
+                                    else // PA is powering down
                                     {
                                         bandLabel.Content = "--m";
                                         driveLabel.Content = "--W";
@@ -276,22 +291,25 @@ namespace ACOM_Controller
 
         void StandbyClick(object sender, RoutedEventArgs e)
         {
+            // Send Standby command to PA
             port.Write(CommandStandby, 0, CommandStandby.Length); 
         }
 
         void OperateClick(object sender, RoutedEventArgs e)
         {
+            // Send Operate command to PA
             port.Write(CommandOperate, 0, CommandOperate.Length);  
         }
 
         void OffClick(object sender, RoutedEventArgs e)
         {
+            // Send Off command to PA
             port.Write(CommandOff, 0, CommandOff.Length);  
         }
 
         void OnTimer(object sender, EventArgs e)
         {
-            // Re-enable telemetry every timer click to ensure status info after startup
+            // Re-enable PA telemetry on every timer click to ensure status info after startup
             port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
         }
     }
