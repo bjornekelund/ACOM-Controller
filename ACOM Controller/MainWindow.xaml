@@ -5,26 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ACOM_Controller"
         mc:Ignorable="d"
-        Title="ACOM Controller" Height="105" Width="510.813" ResizeMode="CanMinimize" ScrollViewer.VerticalScrollBarVisibility="Disabled" WindowStartupLocation="Manual" Closing="MainWindow_Closed" Closed="MainWindow_Closed">
+        Title="ACOM Controller" Height="105" Width="505.313" ResizeMode="CanMinimize" ScrollViewer.VerticalScrollBarVisibility="Disabled" WindowStartupLocation="Manual" Closing="MainWindow_Closed" Closed="MainWindow_Closed">
     <Grid Margin="0,0,0,-1">
         <Button x:Name="standbyButton" Content="Standby" HorizontalAlignment="Left" Margin="10,6,0,0" VerticalAlignment="Top" Width="75" Click="StandbyClick" ClickMode="Press" Background="#FF5AADFF"/>
         <Button x:Name="operateButton" Content="Operate" HorizontalAlignment="Left" Margin="91,6,0,0" VerticalAlignment="Top" Width="75" ClickMode="Press" Click="OperateClick" Background="#FF58F049"/>
         <Button x:Name="offButton" Content="Off" HorizontalAlignment="Left" Margin="172,6,0,0" VerticalAlignment="Top" Width="75" Click="OffClick" Background="#FFCCCDCC"/>
-        <GroupBox Header="Status" HorizontalAlignment="Left" Height="42" Margin="10,30,0,0" VerticalAlignment="Top" Width="124">
+        <GroupBox Header="Status" HorizontalAlignment="Left" Height="42" Margin="9,30,0,0" VerticalAlignment="Top" Width="124">
             <Label x:Name="statusLabel" Content="UNKNOWN" HorizontalAlignment="Right" Height="32" Margin="0,-8,-2,-5" VerticalAlignment="Center" Width="116" FontWeight="Bold" FontSize="18" MinWidth="105" MinHeight="26" TextOptions.TextFormattingMode="Display" HorizontalContentAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
         </GroupBox>
-        <GroupBox Header="Band" HorizontalAlignment="Left" Height="42" Margin="139,30,0,0" VerticalAlignment="Top" Width="65">
+        <GroupBox Header="Band" HorizontalAlignment="Left" Height="42" Margin="138,30,0,0" VerticalAlignment="Top" Width="65">
             <Label x:Name="bandLabel" Content="??m" HorizontalAlignment="Center" Height="27" Margin="-3,-6,-3,-2" VerticalAlignment="Center" Width="59" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Center" FontSize="14"/>
         </GroupBox>
-        <ProgressBar x:Name="tempBar" HorizontalAlignment="Left" Height="25" Margin="292,5,0,0" VerticalAlignment="Top" Width="160" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Value="50"/>
-        <ProgressBar x:Name="pwrBar" HorizontalAlignment="Left" Height="25" Margin="292,42,0,0" VerticalAlignment="Top" Width="137" Maximum="600" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Value="350"/>
-        <Label x:Name="tempLabel" Content="?C" HorizontalAlignment="Left" Margin="458,5,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="41"/>
-        <Label x:Name="pwrLabel" Content="?W" HorizontalAlignment="Left" Margin="458,42,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="41"/>
-        <Label x:Name="fanLabel" Content="Fan ?" HorizontalAlignment="Left" Height="20" Margin="393,8,0,0" VerticalAlignment="Top" Width="56" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontWeight="Bold"/>
-        <GroupBox Header="Drive" HorizontalAlignment="Left" Height="42" Margin="209,30,0,0" VerticalAlignment="Top" Width="72">
+        <ProgressBar x:Name="tempBar" HorizontalAlignment="Left" Height="25" Margin="290,5,0,0" VerticalAlignment="Top" Width="160" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Value="50"/>
+        <ProgressBar x:Name="pwrBar" HorizontalAlignment="Left" Height="25" Margin="290.5,42,0,0" VerticalAlignment="Top" Width="137" Maximum="600" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Value="350"/>
+        <Label x:Name="tempLabel" Content="?C" HorizontalAlignment="Left" Margin="453,5,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="41"/>
+        <Label x:Name="pwrLabel" Content="?W" HorizontalAlignment="Left" Margin="453,42,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="41"/>
+        <Label x:Name="fanLabel" Content="Fan ?" HorizontalAlignment="Left" Height="20" Margin="391,8,0,0" VerticalAlignment="Top" Width="56" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontWeight="Bold"/>
+        <GroupBox Header="Drive" HorizontalAlignment="Left" Height="42" Margin="208,30,0,0" VerticalAlignment="Top" Width="72">
             <Label x:Name="driveLabel" Content="??W" HorizontalAlignment="Center" Height="28" Margin="0,-6,1,-2" VerticalAlignment="Center" Width="59" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Center" FontSize="14"/>
         </GroupBox>
-        <ProgressBar x:Name="pwrBar_Peak" HorizontalAlignment="Left" Height="25" Margin="429,42,0,0" VerticalAlignment="Top" Width="23" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+        <ProgressBar x:Name="pwrBar_Peak" HorizontalAlignment="Left" Height="25" Margin="427,42,0,0" VerticalAlignment="Top" Width="23" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
 
     </Grid>
 </Window>
