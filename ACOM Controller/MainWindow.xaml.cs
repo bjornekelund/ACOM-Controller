@@ -127,8 +127,11 @@ namespace ACOM_Controller
                 // If there are other, non-telemetry, datagrams present in the data stream 
                 // there could be false triggers if they contain the sequence 0x55 0x2f
                 // Complete safety is only achieved by making parser aware of all 
-                // possible datagrams. 
-                if (!parsing & (b == 0x55)) // 0x55 is start of telemetry message
+                // possible datagrams. However, since application does not request 
+                // other datagrams from PA, the current implementation should be safe.
+
+                // 0x55 is first byte in telemetry message
+                if (!parsing & (b == 0x55)) 
                 {
                     msgpos = 0;
                     parsing = true;
@@ -138,21 +141,24 @@ namespace ACOM_Controller
                 {
                     msg[msgpos++] = b;
 
-                    if (msg[1] != 0x2f) // Not a telemetry message, reset parser
+                    // 0x2f is second byte in telemetry datagram. 
+                    // If not a telemetry message, reset parser
+                    if (msg[1] != 0x2f) 
                     {
                         msgpos = 0;
                         parsing = false;
                     }
-                    else // A telemetry message 
+                    else // This may be a telemetry message, keep parsing until we reach msglen
                     {
                         if (msgpos == msglen) // done, time to check check sum
                         {
-                            // decode
+                            // calculate checksum
                             byte checksum = 0;
                             foreach (Byte c in msg)
                                 checksum += c;
 
-                            if (checksum == 0) // checksum ok means a real message - get parameters and update UI
+                            // checksum is zero = ok we have a proper datagram - get parameters and update UI
+                            if (checksum == 0) 
                             {
                                 PAstatus = (msg[3] & 0xF0) >> 4; // extract data from message
 
@@ -204,12 +210,14 @@ namespace ACOM_Controller
                                     }
 
                                     // Temperature bar with fan status 
-                                    PAtemp = msg[16] + msg[17] * 256 - 273; // extract data from message
+                                    PAtemp = msg[16] + msg[17] * 256 - 273; 
                                     PAfan = (msg[69] & 0xF0) >> 4;
 
-                                    if (PAstatus != 10) // PAstatus == 10 means in powering down mode
+                                    // If we are not in powering down mode (PAstatus == 10)
+                                    if (PAstatus != 10) 
                                     {
-                                        if (PAtemp >= 0 & PAtemp <= 100) // safety for corrupted reads
+                                        // Add safety for corrupted reads
+                                        if (PAtemp >= 0 & PAtemp <= 100) 
                                         {
                                             tempLabel.Content = PAtemp.ToString() + "C";
                                             tempBar.Value = PAtemp;
@@ -246,24 +254,26 @@ namespace ACOM_Controller
 
                                         // Filter and display drive power data 
                                         DrivePowerCurrent = msg[20] + msg[21] * 256;
+
                                         DrivePower[DrivePowerPeakIndex++] = DrivePowerCurrent; // save current power in fifo
                                         DrivePowerDisplay = DrivePower.Max()/10;
-                                        if (DrivePowerPeakIndex >= DrivePowerPeakMemory) DrivePowerPeakIndex = 0;  // wrap around
+                                        if (DrivePowerPeakIndex >= DrivePowerPeakMemory)
+                                            DrivePowerPeakIndex = 0;  // wrap around to start
                                         driveLabel.Content = DrivePowerDisplay.ToString("0") + "W";
 
-                                        // Filter output power data 
-                                        // Add 2% to align better with PA's own display, unclear why
+                                        // Filter output power data and add 2% to align better 
+                                        // with PA's own display, unclear why
                                         PApowerCurrent = 1.02f * (msg[22] + msg[23] * 256);
                                         PApower[PApowerPeakIndex++] = PApowerCurrent; // save current power in fifo
                                         PApowerDisplay = PApower.Max();
                                         if (PApowerPeakIndex >= PApowerPeakMemory) PApowerPeakIndex = 0;  // wrap around
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
-                                        // 0-600W part of the bar in blue
+                                        // The 0-600W part of the bar in blue
                                         pwrBar.Value = (PApowerDisplay > 600f) ? 600 : (int)PApowerDisplay;
                                         pwrBar.Foreground = Brushes.RoyalBlue;
 
-                                        // 600-700W part of the bar in red
+                                        // The 600-700W part of the bar in red
                                         pwrBar_Peak.Value = (PApowerDisplay > 600f) ? (int)PApowerDisplay - 600 : 0;
                                         pwrBar_Peak.Foreground = Brushes.Crimson;
 

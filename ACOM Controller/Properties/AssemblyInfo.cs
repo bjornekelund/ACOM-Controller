@@ -8,7 +8,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ACOM Controller")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("ACOM 600S RF power amplifier control application")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SM7IUN")]
 [assembly: AssemblyProduct("ACOM Controller")]
