@@ -133,8 +133,11 @@ namespace ACOM_Controller
                 // If there are other, non-telemetry, datagrams present in the data stream 
                 // there could be false triggers if they contain the sequence 0x55 0x2f
                 // Complete safety is only achieved by making parser aware of all 
-                // possible datagrams. 
-                if (!parsing & (b == 0x55)) // 0x55 is start of telemetry message
+                // possible datagrams. However, since application does not request 
+                // other datagrams from PA, the current implementation should be safe.
+
+                // 0x55 is first byte in telemetry message
+                if (!parsing & (b == 0x55)) 
                 {
                     msgpos = 0;
                     parsing = true;
@@ -144,7 +147,9 @@ namespace ACOM_Controller
                 {
                     msg[msgpos++] = b;
 
-                    if (msg[1] != 0x2f) // Not a telemetry message, reset parser
+                    // 0x2f is second byte in telemetry datagram. 
+                    // If not a telemetry message, reset parser
+                    if (msg[1] != 0x2f) 
                     {
                         msgpos = 0;
                         parsing = false;
@@ -158,7 +163,8 @@ namespace ACOM_Controller
                             foreach (Byte c in msg)
                                 checksum += c;
 
-                            if (checksum == 0) // checksum ok means a real message - get parameters and update UI
+                            // checksum zero => a real message - get parameters and update UI
+                            if (checksum == 0) 
                             {
                                 PAstatus = (msg[3] & 0xF0) >> 4; // extract data from message
 
@@ -257,17 +263,17 @@ namespace ACOM_Controller
                                         if (DrivePowerPeakIndex >= DrivePowerPeakMemory) DrivePowerPeakIndex = 0;  // wrap around
                                         driveLabel.Content = DrivePowerDisplay.ToString("0") + "W";
 
-                                        // Filter and display reflected power data 
+                                        // Filter reflected power data 
                                         ReflectedPowerCurrent = msg[24] + msg[25] * 256.0;
                                         ReflectedPower[ReflectedPowerPeakIndex++] = ReflectedPowerCurrent; // save current power in fifo
                                         ReflectedPowerDisplay = ReflectedPower.Max();
                                         if (ReflectedPowerPeakIndex >= ReflectedPowerPeakMemory) ReflectedPowerPeakIndex = 0;  // wrap around
                                         reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
-
+                                        
                                         // 0-114W part of the reflected bar in gray
                                         reflBar.Value = (ReflectedPowerDisplay > 122.0) ? 122 : (int)ReflectedPowerDisplay;
                                         reflBar.Foreground = Brushes.Gray;
-
+                                        
                                         // 114-150 part of the reflected bar in red
                                         reflBar_Peak.Value = (ReflectedPowerDisplay > 122.0) ? (int)PApowerDisplay - 122 : 0;
                                         reflBar_Peak.Foreground = Brushes.Crimson;
@@ -295,10 +301,17 @@ namespace ACOM_Controller
                                     {
                                         bandLabel.Content = "--m";
                                         driveLabel.Content = "--W";
+
+                                        reflLabel.Content = "--R";
+                                        reflBar.Value = 0;
+                                        reflBar_Peak.Value = 0;
+
                                         tempLabel.Content = "--C";
                                         tempBar.Value = 0;
+
                                         pwrLabel.Content = "---W";
                                         pwrBar.Value = 0;
+                                        pwrBar_Peak.Value = 0;
                                     }
                                 }));
                             }
@@ -310,24 +323,28 @@ namespace ACOM_Controller
             }
         }
 
+        // At click on standby button
         void StandbyClick(object sender, RoutedEventArgs e)
         {
             // Send Standby command to PA
             port.Write(CommandStandby, 0, CommandStandby.Length); 
         }
 
+        // At click on operate button
         void OperateClick(object sender, RoutedEventArgs e)
         {
             // Send Operate command to PA
             port.Write(CommandOperate, 0, CommandOperate.Length);  
         }
 
+        // At click on off button
         void OffClick(object sender, RoutedEventArgs e)
         {
             // Send Off command to PA
             port.Write(CommandOff, 0, CommandOff.Length);  
         }
 
+        // Executed repeatedly 
         void OnTimer(object sender, EventArgs e)
         {
             // Re-enable PA telemetry on every timer click to ensure status info after startup
