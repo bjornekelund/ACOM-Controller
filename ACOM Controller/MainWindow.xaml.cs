@@ -31,15 +31,21 @@ namespace ACOM_Controller
 
         const int PApowerPeakMemory = 10;
         int PApowerPeakIndex = 0; 
-        float[] PApower = new float[PApowerPeakMemory]; // Array for filtering PA power reports
-        float PApowerCurrent; // Current PA power
-        float PApowerDisplay = 0; // Filtered PA output power
+        double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power reports
+        double PApowerCurrent; // Current PA power
+        double PApowerDisplay = 0; // Filtered PA output power
 
         const int DrivePowerPeakMemory = 10;
         int DrivePowerPeakIndex = 0;
-        float[] DrivePower = new float[DrivePowerPeakMemory]; // Array for filtering PA power reports
-        float DrivePowerCurrent; // Current PA power
-        float DrivePowerDisplay = 0; // Filtered PA output power
+        double[] DrivePower = new double[DrivePowerPeakMemory]; // Array for filtering PA power reports
+        double DrivePowerCurrent; // Current PA power
+        double DrivePowerDisplay = 0; // Filtered PA output power
+
+        const int ReflectedPowerPeakMemory = 10;
+        int ReflectedPowerPeakIndex = 0;
+        double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering PA power reports
+        double ReflectedPowerCurrent; // Current PA power
+        double ReflectedPowerDisplay = 0; // Filtered PA output power
 
         SerialPort port;
         
@@ -127,11 +133,8 @@ namespace ACOM_Controller
                 // If there are other, non-telemetry, datagrams present in the data stream 
                 // there could be false triggers if they contain the sequence 0x55 0x2f
                 // Complete safety is only achieved by making parser aware of all 
-                // possible datagrams. However, since application does not request 
-                // other datagrams from PA, the current implementation should be safe.
-
-                // 0x55 is first byte in telemetry message
-                if (!parsing & (b == 0x55)) 
+                // possible datagrams. 
+                if (!parsing & (b == 0x55)) // 0x55 is start of telemetry message
                 {
                     msgpos = 0;
                     parsing = true;
@@ -141,24 +144,21 @@ namespace ACOM_Controller
                 {
                     msg[msgpos++] = b;
 
-                    // 0x2f is second byte in telemetry datagram. 
-                    // If not a telemetry message, reset parser
-                    if (msg[1] != 0x2f) 
+                    if (msg[1] != 0x2f) // Not a telemetry message, reset parser
                     {
                         msgpos = 0;
                         parsing = false;
                     }
-                    else // This may be a telemetry message, keep parsing until we reach msglen
+                    else // A telemetry message 
                     {
                         if (msgpos == msglen) // done, time to check check sum
                         {
-                            // calculate checksum
+                            // decode
                             byte checksum = 0;
                             foreach (Byte c in msg)
                                 checksum += c;
 
-                            // checksum is zero = ok we have a proper datagram - get parameters and update UI
-                            if (checksum == 0) 
+                            if (checksum == 0) // checksum ok means a real message - get parameters and update UI
                             {
                                 PAstatus = (msg[3] & 0xF0) >> 4; // extract data from message
 
@@ -210,14 +210,12 @@ namespace ACOM_Controller
                                     }
 
                                     // Temperature bar with fan status 
-                                    PAtemp = msg[16] + msg[17] * 256 - 273; 
+                                    PAtemp = msg[16] + msg[17] * 256 - 273; // extract data from message
                                     PAfan = (msg[69] & 0xF0) >> 4;
 
-                                    // If we are not in powering down mode (PAstatus == 10)
-                                    if (PAstatus != 10) 
+                                    if (PAstatus != 10) // PAstatus == 10 means in powering down mode
                                     {
-                                        // Add safety for corrupted reads
-                                        if (PAtemp >= 0 & PAtemp <= 100) 
+                                        if (PAtemp >= 0 & PAtemp <= 100) // safety for corrupted reads
                                         {
                                             tempLabel.Content = PAtemp.ToString() + "C";
                                             tempBar.Value = PAtemp;
@@ -253,27 +251,40 @@ namespace ACOM_Controller
                                         }
 
                                         // Filter and display drive power data 
-                                        DrivePowerCurrent = msg[20] + msg[21] * 256;
-
+                                        DrivePowerCurrent = msg[20] + msg[21] * 256.0;
                                         DrivePower[DrivePowerPeakIndex++] = DrivePowerCurrent; // save current power in fifo
-                                        DrivePowerDisplay = DrivePower.Max()/10;
-                                        if (DrivePowerPeakIndex >= DrivePowerPeakMemory)
-                                            DrivePowerPeakIndex = 0;  // wrap around to start
+                                        DrivePowerDisplay = DrivePower.Max() / 10.0;
+                                        if (DrivePowerPeakIndex >= DrivePowerPeakMemory) DrivePowerPeakIndex = 0;  // wrap around
                                         driveLabel.Content = DrivePowerDisplay.ToString("0") + "W";
 
-                                        // Filter output power data and add 2% to align better 
-                                        // with PA's own display, unclear why
+                                        // Filter and display reflected power data 
+                                        ReflectedPowerCurrent = msg[24] + msg[25] * 256.0;
+                                        ReflectedPower[ReflectedPowerPeakIndex++] = ReflectedPowerCurrent; // save current power in fifo
+                                        ReflectedPowerDisplay = ReflectedPower.Max();
+                                        if (ReflectedPowerPeakIndex >= ReflectedPowerPeakMemory) ReflectedPowerPeakIndex = 0;  // wrap around
+                                        reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
+
+                                        // 0-114W part of the reflected bar in gray
+                                        reflBar.Value = (ReflectedPowerDisplay > 122.0) ? 122 : (int)ReflectedPowerDisplay;
+                                        reflBar.Foreground = Brushes.Gray;
+
+                                        // 114-150 part of the reflected bar in red
+                                        reflBar_Peak.Value = (ReflectedPowerDisplay > 122.0) ? (int)PApowerDisplay - 122 : 0;
+                                        reflBar_Peak.Foreground = Brushes.Crimson;
+
+                                        // Filter output power data 
+                                        // Add 2% to align better with PA's own display, unclear why
                                         PApowerCurrent = 1.02f * (msg[22] + msg[23] * 256);
                                         PApower[PApowerPeakIndex++] = PApowerCurrent; // save current power in fifo
                                         PApowerDisplay = PApower.Max();
                                         if (PApowerPeakIndex >= PApowerPeakMemory) PApowerPeakIndex = 0;  // wrap around
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
-                                        // The 0-600W part of the bar in blue
+                                        // 0-600W part of the bar in blue
                                         pwrBar.Value = (PApowerDisplay > 600f) ? 600 : (int)PApowerDisplay;
                                         pwrBar.Foreground = Brushes.RoyalBlue;
 
-                                        // The 600-700W part of the bar in red
+                                        // 600-700W part of the bar in red
                                         pwrBar_Peak.Value = (PApowerDisplay > 600f) ? (int)PApowerDisplay - 600 : 0;
                                         pwrBar_Peak.Foreground = Brushes.Crimson;
 
