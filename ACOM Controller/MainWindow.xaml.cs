@@ -31,15 +31,21 @@ namespace ACOM_Controller
 
         const int PApowerPeakMemory = 10;
         int PApowerPeakIndex = 0; 
-        float[] PApower = new float[PApowerPeakMemory]; // Array for filtering PA power reports
-        float PApowerCurrent; // Current PA power
-        float PApowerDisplay = 0; // Filtered PA output power
+        double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power reports
+        double PApowerCurrent; // Current PA power
+        double PApowerDisplay = 0; // Filtered PA output power
 
         const int DrivePowerPeakMemory = 10;
         int DrivePowerPeakIndex = 0;
-        float[] DrivePower = new float[DrivePowerPeakMemory]; // Array for filtering PA power reports
-        float DrivePowerCurrent; // Current PA power
-        float DrivePowerDisplay = 0; // Filtered PA output power
+        double[] DrivePower = new double[DrivePowerPeakMemory]; // Array for filtering PA power reports
+        double DrivePowerCurrent; // Current PA power
+        double DrivePowerDisplay = 0; // Filtered PA output power
+
+        const int ReflectedPowerPeakMemory = 10;
+        int ReflectedPowerPeakIndex = 0;
+        double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering PA power reports
+        double ReflectedPowerCurrent; // Current PA power
+        double ReflectedPowerDisplay = 0; // Filtered PA output power
 
         SerialPort port;
         
@@ -245,11 +251,26 @@ namespace ACOM_Controller
                                         }
 
                                         // Filter and display drive power data 
-                                        DrivePowerCurrent = msg[20] + msg[21] * 256;
+                                        DrivePowerCurrent = msg[20] + msg[21] * 256.0;
                                         DrivePower[DrivePowerPeakIndex++] = DrivePowerCurrent; // save current power in fifo
-                                        DrivePowerDisplay = DrivePower.Max()/10;
+                                        DrivePowerDisplay = DrivePower.Max() / 10.0;
                                         if (DrivePowerPeakIndex >= DrivePowerPeakMemory) DrivePowerPeakIndex = 0;  // wrap around
                                         driveLabel.Content = DrivePowerDisplay.ToString("0") + "W";
+
+                                        // Filter and display reflected power data 
+                                        ReflectedPowerCurrent = msg[24] + msg[25] * 256.0;
+                                        ReflectedPower[ReflectedPowerPeakIndex++] = ReflectedPowerCurrent; // save current power in fifo
+                                        ReflectedPowerDisplay = ReflectedPower.Max();
+                                        if (ReflectedPowerPeakIndex >= ReflectedPowerPeakMemory) ReflectedPowerPeakIndex = 0;  // wrap around
+                                        reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
+
+                                        // 0-114W part of the reflected bar in gray
+                                        reflBar.Value = (ReflectedPowerDisplay > 122.0) ? 122 : (int)ReflectedPowerDisplay;
+                                        reflBar.Foreground = Brushes.Gray;
+
+                                        // 114-150 part of the reflected bar in red
+                                        reflBar_Peak.Value = (ReflectedPowerDisplay > 122.0) ? (int)PApowerDisplay - 122 : 0;
+                                        reflBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Filter output power data 
                                         // Add 2% to align better with PA's own display, unclear why
