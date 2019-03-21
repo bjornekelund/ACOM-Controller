@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ACOM_Controller"
         mc:Ignorable="d"
-        Title="ACOM Controller" Height="121" Width="505.313" ResizeMode="CanMinimize" ScrollViewer.VerticalScrollBarVisibility="Disabled" WindowStartupLocation="Manual" Closing="MainWindow_Closed" Closed="MainWindow_Closed">
+        Title="ACOM Controller" Height="122" Width="510" ResizeMode="CanMinimize" ScrollViewer.VerticalScrollBarVisibility="Disabled" WindowStartupLocation="Manual" Closing="MainWindow_Closed" Closed="MainWindow_Closed">
     <Grid Margin="0,0,0,-1">
         <Button x:Name="standbyButton" Content="Standby" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top" Width="84" Click="StandbyClick" ClickMode="Press" Background="#FF5AADFF" Height="28" FontSize="14" BorderBrush="#FF5AADFF" Foreground="#FF303030"/>
-        <Button x:Name="operateButton" Content="Operate" HorizontalAlignment="Left" Margin="103,7,0,0" VerticalAlignment="Top" Width="84" ClickMode="Press" Click="OperateClick" Background="#FF58F049" Height="28" FontSize="14" BorderBrush="#FF58F049" Foreground="#FF303030"/>
+        <Button x:Name="operateButton" Content="Operate" HorizontalAlignment="Left" Margin="103,7,0,0" VerticalAlignment="Top" Width="84" ClickMode="Press" Click="OperateClick" Height="28" FontSize="14" BorderBrush="#FF58F049" Foreground="#FF303030" Background="#FF58F049"/>
         <Button x:Name="offButton" Content="Off" HorizontalAlignment="Left" Margin="196,7,0,0" VerticalAlignment="Top" Width="84" Click="OffClick" Background="#FFCCCDCC" Height="28" FontSize="14" BorderBrush="#FFCCCDCC" Foreground="#FF303030"/>
         <GroupBox Header="Status" HorizontalAlignment="Left" Height="42" Margin="9,46,0,0" VerticalAlignment="Top" Width="124">
             <Label x:Name="statusLabel" Content="OFF" HorizontalAlignment="Right" Height="32" Margin="0,-8,-2,-5" VerticalAlignment="Center" Width="116" FontWeight="Bold" FontSize="18" MinWidth="105" MinHeight="26" TextOptions.TextFormattingMode="Display" HorizontalContentAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
