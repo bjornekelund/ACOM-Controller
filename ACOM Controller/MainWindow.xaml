@@ -14,19 +14,19 @@
             <Label x:Name="statusLabel" Content="OFF" HorizontalAlignment="Right" Height="32" Margin="0,-8,-2,-5" VerticalAlignment="Center" Width="116" FontWeight="Bold" FontSize="18" MinWidth="105" MinHeight="26" TextOptions.TextFormattingMode="Display" HorizontalContentAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
         </GroupBox>
         <GroupBox Header="Band" HorizontalAlignment="Left" Height="42" Margin="138,46,0,0" VerticalAlignment="Top" Width="65">
-            <Label x:Name="bandLabel" Content="--m" HorizontalAlignment="Center" Height="27" Margin="-3,-6,-3,-2" VerticalAlignment="Center" Width="59" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Center" FontSize="14"/>
+            <Label x:Name="bandLabel" Content="--m" HorizontalAlignment="Center" Height="27" Margin="-3,-6,-3,-2" VerticalAlignment="Center" Width="59" Foreground="#FF5A5A5A" HorizontalContentAlignment="Center" FontSize="14"/>
         </GroupBox>
         <ProgressBar x:Name="tempBar" HorizontalAlignment="Left" Height="20" Margin="294,66,0,0" VerticalAlignment="Top" Width="160" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderBrush="#FFE6E6E6"/>
         <ProgressBar x:Name="pwrBar" HorizontalAlignment="Left" Height="26" Margin="294,7,0,0" VerticalAlignment="Top" Width="138" Maximum="600" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderBrush="#FFE6E6E6"/>
-        <Label x:Name="tempLabel" Content="--C" HorizontalAlignment="Left" Margin="454,63,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
-        <Label x:Name="pwrLabel" Content="---W" HorizontalAlignment="Left" Margin="454,7,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
+        <Label x:Name="tempLabel" Content="--C" HorizontalAlignment="Left" Margin="454,63,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="#FF5A5A5A"/>
+        <Label x:Name="pwrLabel" Content="---W" HorizontalAlignment="Left" Margin="454,7,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="#FF5A5A5A"/>
         <Label x:Name="fanLabel" Content="" HorizontalAlignment="Left" Height="19" Margin="396,67,0,0" VerticalAlignment="Top" Width="56" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontWeight="Bold"/>
         <GroupBox Header="Drive" HorizontalAlignment="Left" Height="42" Margin="208,46,0,0" VerticalAlignment="Top" Width="72">
-            <Label x:Name="driveLabel" Content="--W" HorizontalAlignment="Center" Height="28" Margin="0,-6,1,-2" VerticalAlignment="Center" Width="59" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Center" FontSize="14"/>
+            <Label x:Name="driveLabel" Content="--W" HorizontalAlignment="Center" Height="28" Margin="0,-6,1,-2" VerticalAlignment="Center" Width="59" Foreground="#FF5A5A5A" HorizontalContentAlignment="Center" FontSize="14"/>
         </GroupBox>
         <ProgressBar x:Name="pwrBar_Peak" HorizontalAlignment="Left" Height="26" Margin="431,7,0,0" VerticalAlignment="Top" Width="23" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderBrush="#FFE6E6E6"/>
         <ProgressBar x:Name="reflBar" HorizontalAlignment="Left" Height="20" Margin="294,39,0,0" VerticalAlignment="Top" Width="122" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderBrush="#FFE6E6E6"/>
-        <Label x:Name="reflLabel" Content="---R" HorizontalAlignment="Left" Margin="454,36,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
+        <Label x:Name="reflLabel" Content="---R" HorizontalAlignment="Left" Margin="454,36,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="#FF5A5A5A"/>
         <ProgressBar x:Name="reflBar_Peak" HorizontalAlignment="Left" Height="20" Margin="415,39,0,0" VerticalAlignment="Top" Width="39" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderBrush="#FFE6E6E6"/>
 
     </Grid>
