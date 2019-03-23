@@ -20,7 +20,7 @@
         <ProgressBar x:Name="pwrBar" HorizontalAlignment="Left" Height="26" Margin="294,7,0,0" VerticalAlignment="Top" Width="138" Maximum="600" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderBrush="#FFE6E6E6"/>
         <Label x:Name="tempLabel" Content="--C" HorizontalAlignment="Left" Margin="454,63,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="#FF5A5A5A"/>
         <Label x:Name="pwrLabel" Content="---W" HorizontalAlignment="Left" Margin="454,7,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="#FF5A5A5A"/>
-        <Label x:Name="fanLabel" Content="" HorizontalAlignment="Left" Height="19" Margin="396,67,0,0" VerticalAlignment="Top" Width="56" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontWeight="Bold"/>
+        <Label x:Name="fanLabel" Content="" HorizontalAlignment="Left" Height="19" Margin="394,66,0,0" VerticalAlignment="Top" Width="56" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontWeight="Bold"/>
         <GroupBox Header="Drive" HorizontalAlignment="Left" Height="42" Margin="208,46,0,0" VerticalAlignment="Top" Width="72">
             <Label x:Name="driveLabel" Content="--W" HorizontalAlignment="Center" Height="28" Margin="0,-6,1,-2" VerticalAlignment="Center" Width="59" Foreground="#FF5A5A5A" HorizontalContentAlignment="Center" FontSize="14"/>
         </GroupBox>
