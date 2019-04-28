@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -12,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SM7IUN")]
 [assembly: AssemblyProduct("ACOM Controller")]
-[assembly: AssemblyCopyright("Copyright © Björn Ekelund 2018")]
+[assembly: AssemblyCopyright("Copyright © Björn Ekelund 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
