@@ -43,9 +43,15 @@ namespace ACOM_Controller
 
         const int ReflectedPowerPeakMemory = 10;
         int ReflectedPowerPeakIndex = 0;
-        double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering PA power reports
-        double ReflectedPowerCurrent; // Current PA power
-        double ReflectedPowerDisplay = 0; // Filtered PA output power
+        double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering reflected power reports
+        double ReflectedPowerCurrent; // Current reflected power
+        double ReflectedPowerDisplay = 0; // Filtered reflected power
+
+        const int swrPeakMemory = 8;
+        int swrPeakIndex = 0;
+        double[] swrValue = new double[swrPeakMemory]; // Array for filtering SWR reports
+        double swrCurrent; // Current SWR
+        double swrDisplay = 0; // Filtered SWR 
 
         SerialPort port;
         
@@ -277,6 +283,16 @@ namespace ACOM_Controller
                                         // 114-150 part of the reflected bar in red
                                         reflBar_Peak.Value = (ReflectedPowerDisplay > 122.0) ? (int)PApowerDisplay - 122 : 0;
                                         reflBar_Peak.Foreground = Brushes.Crimson;
+
+                                        // Filter and display SWR data 
+                                        swrCurrent= (msg[26] + msg[27] * 256) / 100.0;
+                                        swrValue[swrPeakIndex++] = swrCurrent; // save current power in fifo
+                                        swrDisplay= swrValue.Max();
+                                        if (swrPeakIndex>= swrPeakMemory) swrPeakIndex = 0;  // wrap around
+                                        if (swrDisplay != 0)
+                                            swrLabel.Content = swrDisplay.ToString("0.00");
+                                        else
+                                            swrLabel.Content = "";
 
                                         // Filter output power data 
                                         // Add 2% to align better with PA's own display, unclear why
