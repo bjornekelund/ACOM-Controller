@@ -53,6 +53,8 @@ namespace ACOM_Controller
         double swrCurrent; // Current SWR
         double swrDisplay = 0; // Filtered SWR 
 
+        const string programTitle = "ACOM 600S Controller by SM7IUN";
+
         SerialPort port;
         
         public MainWindow()
@@ -67,7 +69,7 @@ namespace ACOM_Controller
             else
                 ComPort = Settings.Default.ComPort;
 
-            ProgramWindow.Title = "ACOM Controller (" + ComPort + ")";
+            ProgramWindow.Title = programTitle + " (" + ComPort + ")";
 
             port = new SerialPort(ComPort, 9600, Parity.None, 8, StopBits.One);
 
@@ -76,8 +78,8 @@ namespace ACOM_Controller
             port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
 
             // Fetch window location from saved settings
-            this.Top = Settings.Default.Top;
-            this.Left = Settings.Default.Left;
+            Top = Settings.Default.Top;
+            Left = Settings.Default.Left;
 
             // Clearing peak detection arrays, just to be safe
             Array.Clear(PApower, 0, PApower.Length);
@@ -98,8 +100,8 @@ namespace ACOM_Controller
         void MainWindow_Closed(object sender, EventArgs e) 
         {
             // Remember window location 
-            Settings.Default.Top = this.Top;
-            Settings.Default.Left = this.Left;
+            Settings.Default.Top = Top;
+            Settings.Default.Left = Left;
             Settings.Default.Save();
 
             // Remember COM port used 
@@ -118,7 +120,8 @@ namespace ACOM_Controller
             }
             catch
             {
-                MessageBoxResult result = MessageBox.Show("Could not open serial port " + ComPort, "ACOM Controller", MessageBoxButton.OK, MessageBoxImage.Question);
+                MessageBoxResult result = MessageBox.Show("Could not open serial port " + ComPort, 
+                    programTitle, MessageBoxButton.OK, MessageBoxImage.Question);
                 if (result == MessageBoxResult.OK)
                 {
                     Application.Current.Shutdown();
