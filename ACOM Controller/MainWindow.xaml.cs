@@ -53,13 +53,13 @@ namespace ACOM_Controller
         double swrCurrent; // Current SWR
         double swrDisplay = 0; // Filtered SWR 
 
-        const string programTitle = "ACOM 600S Controller by SM7IUN";
+        const string programTitle = "ACOM 600S Controller";
 
         SerialPort port;
         
         public MainWindow()
         {
-            String[] commandLineArguments = Environment.GetCommandLineArgs();
+            string[] commandLineArguments = Environment.GetCommandLineArgs();
 
             InitializeComponent();
 
@@ -136,7 +136,7 @@ namespace ACOM_Controller
             byte[] buf = new byte[_port.BytesToRead];
             _port.Read(buf, 0, buf.Length);
 
-            foreach (Byte b in buf)
+            foreach (byte b in buf)
             {
                 // Known weakness of solution below:
                 // If there are other, non-telemetry, datagrams present in the data stream 
@@ -169,7 +169,7 @@ namespace ACOM_Controller
                         {
                             // decode
                             byte checksum = 0;
-                            foreach (Byte c in msg)
+                            foreach (byte c in msg)
                                 checksum += c;
 
                             // checksum zero => a real message - get parameters and update UI
