@@ -284,12 +284,12 @@ namespace ACOM_Controller
                                         if (ReflectedPowerPeakIndex >= ReflectedPowerPeakMemory) ReflectedPowerPeakIndex = 0;  // wrap around
                                         reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
                                         
-                                        // 0-114W part of the reflected bar in gray
-                                        reflBar.Value = (ReflectedPowerDisplay > 122.0) ? 122 : (int)ReflectedPowerDisplay;
+                                        // 0-122W part of the reflected bar in gray
+                                        reflBar.Value = (ReflectedPowerDisplay > 122.0) ? 122.0 : ReflectedPowerDisplay;
                                         reflBar.Foreground = Brushes.Gray;
                                         
-                                        // 114-150 part of the reflected bar in red
-                                        reflBar_Peak.Value = (ReflectedPowerDisplay > 122.0) ? (int)PApowerDisplay - 122 : 0;
+                                        // 122-150 part of the reflected bar in red
+                                        reflBar_Peak.Value = (ReflectedPowerDisplay > 122.0) ? PApowerDisplay - 122.0 : 0;
                                         reflBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Filter and display SWR data 
