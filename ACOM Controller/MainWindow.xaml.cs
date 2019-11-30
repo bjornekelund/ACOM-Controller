@@ -53,6 +53,8 @@ namespace ACOM_Controller
         double swrCurrent; // Current SWR
         double swrDisplay = 0; // Filtered SWR 
 
+        int errorCode, errorParameter;
+
         const string programTitle = "ACOM 600S Controller";
 
         SerialPort port;
@@ -299,22 +301,73 @@ namespace ACOM_Controller
 
                                         // Filter output power data 
                                         // Add 2% to align better with PA's own display, unclear why
-                                        PApowerCurrent = 1.02f * (msg[22] + msg[23] * 256);
+                                        PApowerCurrent = 1.02 * (msg[22] + msg[23] * 256);
                                         PApower[PApowerPeakIndex++] = PApowerCurrent; // save current power in fifo
                                         PApowerDisplay = PApower.Max();
                                         if (PApowerPeakIndex >= PApowerPeakMemory) PApowerPeakIndex = 0;  // wrap around
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
                                         // 0-600W part of the bar in blue
-                                        pwrBar.Value = (PApowerDisplay > 600f) ? 600 : (int)PApowerDisplay;
+                                        pwrBar.Value = (PApowerDisplay > 600.0) ? 600.0 : PApowerDisplay;
                                         pwrBar.Foreground = Brushes.RoyalBlue;
 
                                         // 600-700W part of the bar in red
-                                        pwrBar_Peak.Value = (PApowerDisplay > 600f) ? (int)PApowerDisplay - 600 : 0;
+                                        pwrBar_Peak.Value = (PApowerDisplay > 600.0) ? PApowerDisplay - 600.0 : 0.0;
                                         pwrBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Show active LPF as text
-                                        bandLabel.Content = BandName[msg[69] & 0x0F];  
+                                        bandLabel.Content = BandName[msg[69] & 0x0F];
+
+                                        errorCode = msg[66];
+                                        errorParameter = msg[67] + msg[68] << 8;
+                                        //errorTextButton.Content = string.Format("code: {0}\nparameter: {1}", errorCode, errorParameter);
+                                        if (errorCode == 0xff)
+                                            errorTextButton.Visibility = Visibility.Hidden;
+                                        else 
+                                        { // We have an error or warning condition
+                                            errorTextButton.Visibility = Visibility.Visible;
+                                            switch (errorCode)
+                                            {
+                                                case 0x00:
+                                                case 0x08:
+                                                    errorTextButton.Content = "Hot switching";
+                                                    break;
+                                                case 0x03:
+                                                    errorTextButton.Content = "Drive power at wrong time";
+                                                    break;
+                                                case 0x04:
+                                                case 0x05:
+                                                    errorTextButton.Content = "Reflected power warning";
+                                                    break;
+                                                case 0x06:
+                                                case 0x07:
+                                                    errorTextButton.Content = "Drive power too high";
+                                                    break;
+                                                case 0x0c:
+                                                    errorTextButton.Content = "RF power at wrong time";
+                                                    break;
+                                                case 0x0e:
+                                                    errorTextButton.Content = "Stop transmission first";
+                                                    break;
+                                                case 0x0f:
+                                                    errorTextButton.Content = "Remove drive power";
+                                                    break;
+                                                case 0x24:
+                                                case 0x25:
+                                                case 0x39:
+                                                case 0x44:
+                                                case 0x45:
+                                                case 0x59:
+                                                    errorTextButton.Content = "PAM excessive current";
+                                                    break;
+                                                case 0x70:
+                                                    errorTextButton.Content = "CAT error";
+                                                    break;
+                                                default:
+                                                    errorTextButton.Content = "ERROR";
+                                                    break;
+                                            }
+                                        }
                                     }
                                     else // PA is powering down
                                     {
@@ -368,6 +421,13 @@ namespace ACOM_Controller
         {
             // Re-enable PA telemetry on every timer click to ensure status info after startup
             port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
+        }
+
+        private void DismissErrorClick(object sender, RoutedEventArgs e)
+        {
+            errorTextButton.Visibility = Visibility.Hidden;
+            // Send Operate command to PA
+            port.Write(CommandOperate, 0, CommandOperate.Length);
         }
     }
 }
