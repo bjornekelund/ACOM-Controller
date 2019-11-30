@@ -53,7 +53,7 @@ namespace ACOM_Controller
         double swrCurrent; // Current SWR
         double swrDisplay = 0; // Filtered SWR 
 
-        int errorCode, errorParameter;
+        int errorCode; // Code for error message shown on PA's display
 
         const string programTitle = "ACOM 600S Controller";
 
@@ -319,7 +319,6 @@ namespace ACOM_Controller
                                         bandLabel.Content = BandName[msg[69] & 0x0F];
 
                                         errorCode = msg[66];
-                                        errorParameter = msg[67] + msg[68] << 8;
                                         //errorTextButton.Content = string.Format("code: {0}\nparameter: {1}", errorCode, errorParameter);
                                         if (errorCode == 0xff)
                                             errorTextButton.Visibility = Visibility.Hidden;
