@@ -65,6 +65,9 @@ namespace ACOM_Controller
 
             InitializeComponent();
 
+            // Hide error pop up
+            errorTextButton.Visibility = Visibility.Hidden;
+
             // If there is a command line argument, take it as the COM port, else use same as last time
             if (commandLineArguments.Length > 1)
                 ComPort = commandLineArguments[1].ToUpper();
