@@ -9,6 +9,6 @@ Designed for a minimal screen footprint and can be modified to consume even less
 
 Default configuration is for ACOM 600S with communication on COM4. 
 
-Access to the configuration is through right-clicking the on/off button. 
+Access to the configuration panel is through right-clicking the *Standby* button.
 
 For more information, visit www.sm7iun.se
