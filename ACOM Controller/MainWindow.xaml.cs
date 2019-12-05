@@ -9,7 +9,7 @@ namespace ACOM_Controller
 {
     public partial class MainWindow : Window
     {
-        string ComPort; 
+        string ComPort;
 
         const byte msglen = 72;
         byte[] msg = new byte[msglen];
@@ -55,7 +55,7 @@ namespace ACOM_Controller
 
         int errorCode; // Code for error message shown on PA's display
 
-        const string programTitle = "ACOM 600S Controller";
+        string programTitle;
 
         SerialPort port;
         
@@ -74,7 +74,7 @@ namespace ACOM_Controller
             else
                 ComPort = Settings.Default.ComPort;
 
-            ProgramWindow.Title = programTitle + " (" + ComPort + ")";
+            ProgramWindow.Title = "ACOM " + Settings.Default.AmplifierModel + " Controller (" + ComPort + ")";
 
             port = new SerialPort(ComPort, 9600, Parity.None, 8, StopBits.One);
 
@@ -285,11 +285,11 @@ namespace ACOM_Controller
                                         reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
                                         
                                         // 0-122W part of the reflected bar in gray
-                                        reflBar.Value = (ReflectedPowerDisplay > 122.0) ? 122.0 : ReflectedPowerDisplay;
+                                        reflBar.Value = (ReflectedPowerDisplay > Settings.Default.NominalReversePower) ? Settings.Default.NominalReversePower : ReflectedPowerDisplay;
                                         reflBar.Foreground = Brushes.Gray;
                                         
                                         // 122-150 part of the reflected bar in red
-                                        reflBar_Peak.Value = (ReflectedPowerDisplay > 122.0) ? PApowerDisplay - 122.0 : 0;
+                                        reflBar_Peak.Value = (ReflectedPowerDisplay > Settings.Default.NominalReversePower) ? PApowerDisplay - Settings.Default.NominalReversePower : 0;
                                         reflBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Filter and display SWR data 
@@ -311,11 +311,11 @@ namespace ACOM_Controller
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
                                         // 0-600W part of the bar in blue
-                                        pwrBar.Value = (PApowerDisplay > 600.0) ? 600.0 : PApowerDisplay;
+                                        pwrBar.Value = (PApowerDisplay > Settings.Default.NominalForwardPower) ? Settings.Default.NominalForwardPower : PApowerDisplay;
                                         pwrBar.Foreground = Brushes.RoyalBlue;
 
                                         // 600-700W part of the bar in red
-                                        pwrBar_Peak.Value = (PApowerDisplay > 600.0) ? PApowerDisplay - 600.0 : 0.0;
+                                        pwrBar_Peak.Value = (PApowerDisplay > Settings.Default.NominalForwardPower) ? PApowerDisplay - Settings.Default.NominalForwardPower : 0.0;
                                         pwrBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Show active LPF as text
