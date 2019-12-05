@@ -10,8 +10,8 @@ namespace ACOM_Controller
         {
             InitializeComponent();
 
-            Top = mw.Top + 50;
-            Left = mw.Left + 100;
+            Top = mw.Top + 10;
+            Left = mw.Left + 50;
 
             mainwindow = mw;
             modelComboBox.Items.Add("600S");
