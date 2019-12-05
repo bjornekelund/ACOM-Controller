@@ -13,8 +13,8 @@
         <ComboBox x:Name="portComboBox" HorizontalAlignment="Left" Margin="144,36,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="1.747,-1.152"/>
         <Label Content="PA model" HorizontalAlignment="Left" VerticalAlignment="Top" Width="68" Margin="4,10,0,0"/>
         <Label Content="COM port" HorizontalAlignment="Left" Margin="138,10,0,0" VerticalAlignment="Top" Width="79"/>
-        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="101,68,0,0" VerticalAlignment="Top" Width="75" Click="cancelButton_Click"/>
-        <Button x:Name="okButton" Content="OK" HorizontalAlignment="Left" Margin="189,68,0,0" VerticalAlignment="Top" Width="75" Click="okButton_Click"/>
+        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="101,68,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
+        <Button x:Name="okButton" Content="OK" HorizontalAlignment="Left" Margin="189,68,0,0" VerticalAlignment="Top" Width="75" Click="OkButton_Click"/>
 
     </Grid>
 </Window>

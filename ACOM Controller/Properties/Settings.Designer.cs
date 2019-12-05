@@ -49,7 +49,7 @@ namespace ACOM_Controller.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("COM11")]
+        [global::System.Configuration.DefaultSettingValueAttribute("COM4")]
         public string ComPort {
             get {
                 return ((string)(this["ComPort"]));

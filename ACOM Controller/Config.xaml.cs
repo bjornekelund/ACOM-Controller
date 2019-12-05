@@ -19,17 +19,17 @@ namespace ACOM_Controller
             modelComboBox.Items.Add("1200S");
             modelComboBox.SelectedItem = model;
 
-            for (int i = 0; i < 30; i++)
+            for (int i = 1; i <= 30; i++)
                 portComboBox.Items.Add("COM" + i.ToString());
             portComboBox.SelectedItem = port;
         }
 
-        private void cancelButton_Click(object sender, RoutedEventArgs e)
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
-        private void okButton_Click(object sender, RoutedEventArgs e)
+        private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             mainwindow.Configuration(portComboBox.Text, modelComboBox.Text);
             Close();

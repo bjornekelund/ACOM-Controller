@@ -61,30 +61,18 @@ namespace ACOM_Controller
         string programTitle;
 
         bool portIsOpen = false;
+        bool linkIsAlive = false;
 
-        SerialPort port;
+        SerialPort Port;
         
         public MainWindow()
         {
-            //string[] commandLineArguments = Environment.GetCommandLineArgs();
-
-
             InitializeComponent();
 
             // Hide error pop up
             errorTextButton.Visibility = Visibility.Hidden;
 
-            // If there is a command line argument, take it as the COM port, else use same as last time
-            //if (commandLineArguments.Length > 1)
-            //    ComPort = commandLineArguments[1].ToUpper();
-            //else
-            //    ComPort = Settings.Default.ComPort;
-
             Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel);
-
-            // Send enable telemetry command to PA
-            if (portIsOpen)
-                port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
 
             // Fetch window location from saved settings
             Top = Settings.Default.Top;
@@ -112,29 +100,30 @@ namespace ACOM_Controller
 
             // Send disable telemetry command to PA
             if (portIsOpen)
-                port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
+                Port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
         }
 
         public void Configuration(string comPort, string ampModel)
         {
             try
             {
-                port.Close();
-                port.DataReceived -= Port_OnReceiveData;
+                // Make sure port is released and event unsubscribed
+                Port.Close();
+                Port.DataReceived -= Port_OnReceiveData;
             }
             catch { }
 
             portIsOpen = false;
 
+            // Default to COM4 if config file has been corrupted
             if (comPort == "")
                 comPort = "COM4";
 
-
-            port = new SerialPort(comPort, 9600, Parity.None, 8, StopBits.One);
+            Port = new SerialPort(comPort, 9600, Parity.None, 8, StopBits.One);
 
             try
             {
-                port.Open();
+                Port.Open();
                 portIsOpen = true;
             }
             catch
@@ -157,6 +146,7 @@ namespace ACOM_Controller
                     MaxReversePower = 300.0;
                     break;
                 default:
+                    // Default to ACOM 600S if config file has been corrupted
                     ampModel = "600S";
                     NominalForwardPower = 600.0;
                     MaxForwardPower = 700.0;
@@ -171,6 +161,7 @@ namespace ACOM_Controller
 
             programTitle = "ACOM " + ampModel + " Controller (" + comPort + (portIsOpen ? ")" : " - failed to open)");
 
+            // UI changes has to be made on main thread
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 ProgramWindow.Title = programTitle;
@@ -179,9 +170,13 @@ namespace ACOM_Controller
                 reflBar.Maximum = NominalReversePower;
                 reflBar_Peak.Maximum = MaxReversePower - NominalReversePower;
             }));
-            // Enable event handler for serial data received
 
-            port.DataReceived += Port_OnReceiveData; // DataReceived Event Handler
+            // Send enable telemetry command to PA
+            if (portIsOpen)
+                Port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
+
+            // Enable event handler for serial data received
+            Port.DataReceived += Port_OnReceiveData; // DataReceived Event Handler
         }
 
         // Event handler for received data
@@ -190,6 +185,8 @@ namespace ACOM_Controller
             SerialPort _port = (SerialPort)sender;
             byte[] buf = new byte[_port.BytesToRead];
             _port.Read(buf, 0, buf.Length);
+
+            linkIsAlive = true; // Set flag to indicate telemetry is flowing
 
             foreach (byte b in buf)
             {
@@ -410,13 +407,13 @@ namespace ACOM_Controller
                                                 case 0x44:
                                                 case 0x45:
                                                 case 0x59:
-                                                    errorTextButton.Content = "PAM excessive current";
+                                                    errorTextButton.Content = "Excessive PAM current";
                                                     break;
                                                 case 0x70:
                                                     errorTextButton.Content = "CAT error";
                                                     break;
                                                 default:
-                                                    errorTextButton.Content = "ERROR";
+                                                    errorTextButton.Content = "ERROR - See display";
                                                     break;
                                             }
                                         }
@@ -452,7 +449,7 @@ namespace ACOM_Controller
         {
             // Send Standby command to PA
             if (portIsOpen)
-                port.Write(CommandStandby, 0, CommandStandby.Length); 
+                Port.Write(CommandStandby, 0, CommandStandby.Length); 
         }
 
         // At click on operate button
@@ -460,7 +457,7 @@ namespace ACOM_Controller
         {
             // Send Operate command to PA
             if (portIsOpen)
-                port.Write(CommandOperate, 0, CommandOperate.Length);  
+                Port.Write(CommandOperate, 0, CommandOperate.Length);  
         }
 
         // At click on off button
@@ -468,7 +465,7 @@ namespace ACOM_Controller
         {
             // Send Off command to PA
             if (portIsOpen)
-                port.Write(CommandOff, 0, CommandOff.Length);  
+                Port.Write(CommandOff, 0, CommandOff.Length);  
         }
 
         // Executed repeatedly 
@@ -476,7 +473,30 @@ namespace ACOM_Controller
         {
             // Re-enable PA telemetry on every timer click to ensure status info after startup
             if (portIsOpen)
-                port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
+                Port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
+
+            if (!linkIsAlive)
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    bandLabel.Content = "--m";
+                    driveLabel.Content = "--W";
+
+                    reflLabel.Content = "--R";
+                    reflBar.Value = 0;
+                    reflBar_Peak.Value = 0;
+
+                    tempLabel.Content = "--C";
+                    tempBar.Value = 0;
+
+                    pwrLabel.Content = "---W";
+                    pwrBar.Value = 0;
+                    pwrBar_Peak.Value = 0;
+
+                    statusLabel.Foreground = Brushes.Gray;
+                    statusLabel.Content = "NO DATA";
+                }));
+            
+            linkIsAlive = false;
         }
 
         private void DismissErrorClick(object sender, RoutedEventArgs e)
@@ -484,7 +504,7 @@ namespace ACOM_Controller
             errorTextButton.Visibility = Visibility.Hidden;
             // Send Operate command to PA
             if (portIsOpen)
-                port.Write(CommandOperate, 0, CommandOperate.Length);
+                Port.Write(CommandOperate, 0, CommandOperate.Length);
         }
 
         private void standbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
