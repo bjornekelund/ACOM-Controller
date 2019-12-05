@@ -5,14 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ACOM_Controller"
         mc:Ignorable="d"
-        Title="Config" Height="112.211" Width="287.123" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" WindowStyle="None">
-    <Grid x:Name="Panel">
-        <ComboBox x:Name="modelComboBox" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="120"/>
-        <ComboBox x:Name="portComboBox" HorizontalAlignment="Left" Margin="151,36,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="1.747,-1.152"/>
-        <Label Content="Model" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="55"/>
-        <Label Content="COM port" HorizontalAlignment="Left" Margin="151,10,0,0" VerticalAlignment="Top" Width="79"/>
-        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="10,71,0,0" VerticalAlignment="Top" Width="75" Click="cancelButton_Click"/>
-        <Button x:Name="okButton" Content="OK" HorizontalAlignment="Left" Margin="196,71,0,0" VerticalAlignment="Top" Width="75" Click="okButton_Click"/>
+        Title="Config" Height="115.688" Width="291.864" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="Manual" WindowStyle="None">
+    <Grid x:Name="Panel" Margin="10">
+        <GroupBox x:Name="GroupBox" Header="Configuration" HorizontalAlignment="Left" Height="106" Margin="-4,-9,0,0" VerticalAlignment="Top" Width="277"/>
+
+        <ComboBox x:Name="modelComboBox" HorizontalAlignment="Left" Margin="7,36,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="portComboBox" HorizontalAlignment="Left" Margin="144,36,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="1.747,-1.152"/>
+        <Label Content="PA model" HorizontalAlignment="Left" VerticalAlignment="Top" Width="68" Margin="4,10,0,0"/>
+        <Label Content="COM port" HorizontalAlignment="Left" Margin="138,10,0,0" VerticalAlignment="Top" Width="79"/>
+        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="101,68,0,0" VerticalAlignment="Top" Width="75" Click="cancelButton_Click"/>
+        <Button x:Name="okButton" Content="OK" HorizontalAlignment="Left" Margin="189,68,0,0" VerticalAlignment="Top" Width="75" Click="okButton_Click"/>
 
     </Grid>
 </Window>

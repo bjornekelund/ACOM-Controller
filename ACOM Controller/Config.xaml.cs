@@ -1,21 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace ACOM_Controller
 {
-    /// <summary>
-    /// Interaction logic for Config.xaml
-    /// </summary>
     public partial class Config : Window
     {
         MainWindow mainwindow;
@@ -24,25 +10,29 @@ namespace ACOM_Controller
         {
             InitializeComponent();
 
+            Top = mw.Top + 50;
+            Left = mw.Left + 100;
+
             mainwindow = mw;
             modelComboBox.Items.Add("600S");
             modelComboBox.Items.Add("700S");
             modelComboBox.Items.Add("1200S");
             modelComboBox.SelectedItem = model;
 
-            for (int i = 0; i < 40; i++)
+            for (int i = 0; i < 30; i++)
                 portComboBox.Items.Add("COM" + i.ToString());
             portComboBox.SelectedItem = port;
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void okButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            mainwindow.Configuration(portComboBox.Text, modelComboBox.Text);
+            Close();
         }
     }
 }

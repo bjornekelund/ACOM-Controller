@@ -9,8 +9,6 @@ namespace ACOM_Controller
 {
     public partial class MainWindow : Window
     {
-        string ComPort;
-
         const byte msglen = 72;
         byte[] msg = new byte[msglen];
         byte msgpos = 0;
@@ -53,6 +51,11 @@ namespace ACOM_Controller
         double swrCurrent; // Current SWR
         double swrDisplay = 0; // Filtered SWR 
 
+        double NominalForwardPower; // For scaling display
+        double MaxForwardPower;
+        double NominalReversePower;
+        double MaxReversePower;
+
         int errorCode; // Code for error message shown on PA's display
 
         string programTitle;
@@ -63,7 +66,7 @@ namespace ACOM_Controller
         
         public MainWindow()
         {
-            string[] commandLineArguments = Environment.GetCommandLineArgs();
+            //string[] commandLineArguments = Environment.GetCommandLineArgs();
 
 
             InitializeComponent();
@@ -72,19 +75,12 @@ namespace ACOM_Controller
             errorTextButton.Visibility = Visibility.Hidden;
 
             // If there is a command line argument, take it as the COM port, else use same as last time
-            if (commandLineArguments.Length > 1)
-                ComPort = commandLineArguments[1].ToUpper();
-            else
-                ComPort = Settings.Default.ComPort;
+            //if (commandLineArguments.Length > 1)
+            //    ComPort = commandLineArguments[1].ToUpper();
+            //else
+            //    ComPort = Settings.Default.ComPort;
 
-            port = new SerialPort(ComPort, 9600, Parity.None, 8, StopBits.One);
-
-            OpenSerial();
-
-            programTitle = "ACOM " + Settings.Default.AmplifierModel + " Controller (" +
-                (portIsOpen ? ComPort + ")" : "No COM port)");
-
-            ProgramWindow.Title = programTitle;
+            Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel);
 
             // Send enable telemetry command to PA
             if (portIsOpen)
@@ -97,9 +93,6 @@ namespace ACOM_Controller
             // Clearing peak detection arrays, just to be safe
             Array.Clear(PApower, 0, PApower.Length);
             Array.Clear(DrivePower, 0, DrivePower.Length);
-
-            // Enable event handler for serial data received
-            port.DataReceived += Port_OnReceiveData; // DataReceived Event Handler
 
             // Since there is no way to know if telemetry is enabled on PA, 
             // use a periodic timer to constantly re-enable telemetry
@@ -117,17 +110,28 @@ namespace ACOM_Controller
             Settings.Default.Left = Left;
             Settings.Default.Save();
 
-            // Remember COM port used 
-            Settings.Default.ComPort = ComPort;
-
             // Send disable telemetry command to PA
             if (portIsOpen)
                 port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
         }
 
-        // Safely open serial port and throw a popup if fails
-        void OpenSerial()
+        public void Configuration(string comPort, string ampModel)
         {
+            try
+            {
+                port.Close();
+                port.DataReceived -= Port_OnReceiveData;
+            }
+            catch { }
+
+            portIsOpen = false;
+
+            if (comPort == "")
+                comPort = "COM4";
+
+
+            port = new SerialPort(comPort, 9600, Parity.None, 8, StopBits.One);
+
             try
             {
                 port.Open();
@@ -136,14 +140,48 @@ namespace ACOM_Controller
             catch
             {
                 portIsOpen = false;
-
-                //MessageBoxResult result = MessageBox.Show("Could not open serial port " + ComPort, 
-                //    programTitle, MessageBoxButton.OK, MessageBoxImage.Question);
-                //if (result == MessageBoxResult.OK)
-                //{
-                //    Application.Current.Shutdown();
-                //}
             }
+
+            switch (ampModel)
+            {
+                case "700S":
+                    NominalForwardPower = 700.0;
+                    MaxForwardPower = 800.0;
+                    NominalReversePower = 129.0;
+                    MaxReversePower = 170.0;
+                    break;
+                case "1200S":
+                    NominalForwardPower = 1200.0;
+                    MaxForwardPower = 1400.0;
+                    NominalReversePower = 228.0;
+                    MaxReversePower = 300.0;
+                    break;
+                default:
+                    ampModel = "600S";
+                    NominalForwardPower = 600.0;
+                    MaxForwardPower = 700.0;
+                    NominalReversePower = 114.0;
+                    MaxReversePower = 150.0;
+                    break;
+            }
+
+            Settings.Default.AmplifierModel = ampModel;
+            Settings.Default.ComPort = comPort;
+            Settings.Default.Save();
+
+            programTitle = "ACOM " + ampModel + " Controller (" + comPort + (portIsOpen ? ")" : " - failed to open)");
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                ProgramWindow.Title = programTitle;
+                pwrBar.Maximum = NominalForwardPower;
+                pwrBar_Peak.Maximum = MaxForwardPower - NominalForwardPower;
+                reflBar.Maximum = NominalReversePower;
+                reflBar_Peak.Maximum = MaxReversePower - NominalReversePower;
+            }));
+            // Enable event handler for serial data received
+
+            port.DataReceived += Port_OnReceiveData; // DataReceived Event Handler
         }
 
         // Event handler for received data
@@ -296,12 +334,12 @@ namespace ACOM_Controller
                                         if (ReflectedPowerPeakIndex >= ReflectedPowerPeakMemory) ReflectedPowerPeakIndex = 0;  // wrap around
                                         reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
                                         
-                                        // 0-122W part of the reflected bar in gray
-                                        reflBar.Value = (ReflectedPowerDisplay > Settings.Default.NominalReversePower) ? Settings.Default.NominalReversePower : ReflectedPowerDisplay;
+                                        // Lower part of the reflected bar in gray
+                                        reflBar.Value = (ReflectedPowerDisplay > NominalReversePower) ? NominalReversePower : ReflectedPowerDisplay;
                                         reflBar.Foreground = Brushes.Gray;
                                         
-                                        // 122-150 part of the reflected bar in red
-                                        reflBar_Peak.Value = (ReflectedPowerDisplay > Settings.Default.NominalReversePower) ? PApowerDisplay - Settings.Default.NominalReversePower : 0;
+                                        // Upper part of the reflected bar in red
+                                        reflBar_Peak.Value = (ReflectedPowerDisplay > NominalReversePower) ? PApowerDisplay - NominalReversePower : 0;
                                         reflBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Filter and display SWR data 
@@ -322,12 +360,12 @@ namespace ACOM_Controller
                                         if (PApowerPeakIndex >= PApowerPeakMemory) PApowerPeakIndex = 0;  // wrap around
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
-                                        // 0-600W part of the bar in blue
-                                        pwrBar.Value = (PApowerDisplay > Settings.Default.NominalForwardPower) ? Settings.Default.NominalForwardPower : PApowerDisplay;
+                                        // Lower part of the bar in blue
+                                        pwrBar.Value = (PApowerDisplay > NominalForwardPower) ? NominalForwardPower : PApowerDisplay;
                                         pwrBar.Foreground = Brushes.RoyalBlue;
 
-                                        // 600-700W part of the bar in red
-                                        pwrBar_Peak.Value = (PApowerDisplay > Settings.Default.NominalForwardPower) ? PApowerDisplay - Settings.Default.NominalForwardPower : 0.0;
+                                        // Upper part of the bar in red
+                                        pwrBar_Peak.Value = (PApowerDisplay > NominalForwardPower) ? PApowerDisplay - NominalForwardPower : 0.0;
                                         pwrBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Show active LPF as text
@@ -409,11 +447,6 @@ namespace ACOM_Controller
             }
         }
 
-        void configuration(string comPort, string ampModel)
-        {
-            
-        }
-
         // At click on standby button
         void StandbyClick(object sender, RoutedEventArgs e)
         {
@@ -458,7 +491,6 @@ namespace ACOM_Controller
         {
             Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort);
             configPanel.ShowDialog();
-            Settings.Default.Save();
         }
     }
 }
