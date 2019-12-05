@@ -57,13 +57,14 @@ namespace ACOM_Controller
 
         string programTitle;
 
+        bool portIsOpen = false;
+
         SerialPort port;
         
         public MainWindow()
         {
             string[] commandLineArguments = Environment.GetCommandLineArgs();
 
-            programTitle = "ACOM " + Settings.Default.AmplifierModel + " Controller (" + ComPort + ")";
 
             InitializeComponent();
 
@@ -76,13 +77,18 @@ namespace ACOM_Controller
             else
                 ComPort = Settings.Default.ComPort;
 
-            ProgramWindow.Title = programTitle;
-
             port = new SerialPort(ComPort, 9600, Parity.None, 8, StopBits.One);
 
             OpenSerial();
+
+            programTitle = "ACOM " + Settings.Default.AmplifierModel + " Controller (" +
+                (portIsOpen ? ComPort + ")" : "No COM port)");
+
+            ProgramWindow.Title = programTitle;
+
             // Send enable telemetry command to PA
-            //port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
+            if (portIsOpen)
+                port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
 
             // Fetch window location from saved settings
             Top = Settings.Default.Top;
@@ -115,7 +121,8 @@ namespace ACOM_Controller
             Settings.Default.ComPort = ComPort;
 
             // Send disable telemetry command to PA
-            port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
+            if (portIsOpen)
+                port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
         }
 
         // Safely open serial port and throw a popup if fails
@@ -124,15 +131,18 @@ namespace ACOM_Controller
             try
             {
                 port.Open();
+                portIsOpen = true;
             }
             catch
             {
-                MessageBoxResult result = MessageBox.Show("Could not open serial port " + ComPort, 
-                    programTitle, MessageBoxButton.OK, MessageBoxImage.Question);
-                if (result == MessageBoxResult.OK)
-                {
-                    Application.Current.Shutdown();
-                }
+                portIsOpen = false;
+
+                //MessageBoxResult result = MessageBox.Show("Could not open serial port " + ComPort, 
+                //    programTitle, MessageBoxButton.OK, MessageBoxImage.Question);
+                //if (result == MessageBoxResult.OK)
+                //{
+                //    Application.Current.Shutdown();
+                //}
             }
         }
 
@@ -408,35 +418,40 @@ namespace ACOM_Controller
         void StandbyClick(object sender, RoutedEventArgs e)
         {
             // Send Standby command to PA
-            port.Write(CommandStandby, 0, CommandStandby.Length); 
+            if (portIsOpen)
+                port.Write(CommandStandby, 0, CommandStandby.Length); 
         }
 
         // At click on operate button
         void OperateClick(object sender, RoutedEventArgs e)
         {
             // Send Operate command to PA
-            port.Write(CommandOperate, 0, CommandOperate.Length);  
+            if (portIsOpen)
+                port.Write(CommandOperate, 0, CommandOperate.Length);  
         }
 
         // At click on off button
         void OffClick(object sender, RoutedEventArgs e)
         {
             // Send Off command to PA
-            port.Write(CommandOff, 0, CommandOff.Length);  
+            if (portIsOpen)
+                port.Write(CommandOff, 0, CommandOff.Length);  
         }
 
         // Executed repeatedly 
         void OnTimer(object sender, EventArgs e)
         {
             // Re-enable PA telemetry on every timer click to ensure status info after startup
-            //port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
+            if (portIsOpen)
+                port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
         }
 
         private void DismissErrorClick(object sender, RoutedEventArgs e)
         {
             errorTextButton.Visibility = Visibility.Hidden;
             // Send Operate command to PA
-            port.Write(CommandOperate, 0, CommandOperate.Length);
+            if (portIsOpen)
+                port.Write(CommandOperate, 0, CommandOperate.Length);
         }
 
         private void standbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
