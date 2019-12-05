@@ -3,12 +3,16 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.IO.Ports;
+using System.Reflection;
 using ACOM_Controller.Properties;
 
 namespace ACOM_Controller
 {
     public partial class MainWindow : Window
     {
+        AssemblyName _assemblyName = Assembly.GetExecutingAssembly().GetName();
+        string Release;
+
         const byte msglen = 72;
         byte[] msg = new byte[msglen];
         byte msgpos = 0;
@@ -69,6 +73,8 @@ namespace ACOM_Controller
         {
             InitializeComponent();
 
+            Release = string.Format(" {0}.{1} ", _assemblyName.Version.Major, _assemblyName.Version.Minor);
+
             // Hide error pop up
             errorTextButton.Visibility = Visibility.Hidden;
 
@@ -116,10 +122,7 @@ namespace ACOM_Controller
             portIsOpen = false;
 
             // Default to COM4 if config file has been corrupted
-            if (comPort == "")
-                comPort = "COM4";
-
-            Port = new SerialPort(comPort, 9600, Parity.None, 8, StopBits.One);
+            Port = new SerialPort(comPort == "" ? "COM4" : comPort, 9600, Parity.None, 8, StopBits.One);
 
             try
             {
@@ -159,7 +162,8 @@ namespace ACOM_Controller
             Settings.Default.ComPort = comPort;
             Settings.Default.Save();
 
-            programTitle = "ACOM " + ampModel + " Controller (" + comPort + (portIsOpen ? ")" : " - failed to open)");
+            programTitle = "ACOM " + ampModel + " Controller" + Release + "(" 
+                + comPort + (portIsOpen ? ")" : " - failed to open)");
 
             // UI changes has to be made on main thread
             Application.Current.Dispatcher.Invoke(new Action(() =>
