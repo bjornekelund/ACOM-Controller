@@ -63,6 +63,8 @@ namespace ACOM_Controller
         {
             string[] commandLineArguments = Environment.GetCommandLineArgs();
 
+            programTitle = "ACOM " + Settings.Default.AmplifierModel + " Controller (" + ComPort + ")";
+
             InitializeComponent();
 
             // Hide error pop up
@@ -74,13 +76,13 @@ namespace ACOM_Controller
             else
                 ComPort = Settings.Default.ComPort;
 
-            ProgramWindow.Title = "ACOM " + Settings.Default.AmplifierModel + " Controller (" + ComPort + ")";
+            ProgramWindow.Title = programTitle;
 
             port = new SerialPort(ComPort, 9600, Parity.None, 8, StopBits.One);
 
             OpenSerial();
             // Send enable telemetry command to PA
-            port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
+            //port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
 
             // Fetch window location from saved settings
             Top = Settings.Default.Top;
@@ -397,6 +399,11 @@ namespace ACOM_Controller
             }
         }
 
+        void configuration(string comPort, string ampModel)
+        {
+            
+        }
+
         // At click on standby button
         void StandbyClick(object sender, RoutedEventArgs e)
         {
@@ -422,7 +429,7 @@ namespace ACOM_Controller
         void OnTimer(object sender, EventArgs e)
         {
             // Re-enable PA telemetry on every timer click to ensure status info after startup
-            port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
+            //port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
         }
 
         private void DismissErrorClick(object sender, RoutedEventArgs e)
@@ -430,6 +437,13 @@ namespace ACOM_Controller
             errorTextButton.Visibility = Visibility.Hidden;
             // Send Operate command to PA
             port.Write(CommandOperate, 0, CommandOperate.Length);
+        }
+
+        private void standbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort);
+            configPanel.ShowDialog();
+            Settings.Default.Save();
         }
     }
 }
