@@ -344,7 +344,7 @@ namespace ACOM_Controller
                                         reflBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Filter and display SWR data 
-                                        swrCurrent= (msg[26] + msg[27] * 256) / 100.0;
+                                        swrCurrent = (msg[26] + msg[27] * 256) / 100.0;
                                         swrValue[swrPeakIndex++] = swrCurrent; // save current power in fifo
                                         swrDisplay= swrValue.Max();
                                         if (swrPeakIndex>= swrPeakMemory) swrPeakIndex = 0;  // wrap around
@@ -428,15 +428,15 @@ namespace ACOM_Controller
                                         driveLabel.Content = "--W";
 
                                         reflLabel.Content = "--R";
-                                        reflBar.Value = 0;
-                                        reflBar_Peak.Value = 0;
+                                        reflBar.Value = 0.0;
+                                        reflBar_Peak.Value = 0.0;
 
                                         tempLabel.Content = "--C";
-                                        tempBar.Value = 0;
+                                        tempBar.Value = 0.0;
 
                                         pwrLabel.Content = "---W";
-                                        pwrBar.Value = 0;
-                                        pwrBar_Peak.Value = 0;
+                                        pwrBar.Value = 0.0;
+                                        pwrBar_Peak.Value = 0.0;
                                     }
                                 }));
                             }
@@ -486,15 +486,15 @@ namespace ACOM_Controller
                     driveLabel.Content = "--W";
 
                     reflLabel.Content = "--R";
-                    reflBar.Value = 0;
-                    reflBar_Peak.Value = 0;
+                    reflBar.Value = 0.0;
+                    reflBar_Peak.Value = 0.0;
 
                     tempLabel.Content = "--C";
-                    tempBar.Value = 0;
+                    tempBar.Value = 0.0;
 
                     pwrLabel.Content = "---W";
-                    pwrBar.Value = 0;
-                    pwrBar_Peak.Value = 0;
+                    pwrBar.Value = 0.0;
+                    pwrBar_Peak.Value = 0.0;
 
                     statusLabel.Foreground = Brushes.Gray;
                     statusLabel.Content = "OFF";
