@@ -497,7 +497,7 @@ namespace ACOM_Controller
                     pwrBar_Peak.Value = 0;
 
                     statusLabel.Foreground = Brushes.Gray;
-                    statusLabel.Content = "NO DATA";
+                    statusLabel.Content = "OFF";
                 }));
             
             linkIsAlive = false;
