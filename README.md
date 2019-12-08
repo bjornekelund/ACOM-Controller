@@ -12,4 +12,6 @@ Default configuration is for ACOM 600S with communication on COM4.
 
 Right-click the *Standby* button to access the configuration panel.
 
+The app always stays on top to allow use with a full screen logger on a single screen.
+
 For more information, visit www.sm7iun.se
