@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ACOM_Controller"
         mc:Ignorable="d"
-        Title="Config" Height="115.688" Width="291.864" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="Manual" WindowStyle="None">
+        Title="Config" Height="115.688" Width="291.864" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="Manual" WindowStyle="None" Topmost="True">
     <Grid x:Name="Panel" Margin="10">
         <GroupBox x:Name="GroupBox" Header="Configuration" HorizontalAlignment="Left" Height="106" Margin="-4,-9,0,0" VerticalAlignment="Top" Width="277"/>
 
