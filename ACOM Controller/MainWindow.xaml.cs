@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.IO.Ports;
@@ -74,6 +75,12 @@ namespace ACOM_Controller
             InitializeComponent();
 
             Release = string.Format(" {0}.{1} ", _assemblyName.Version.Major, _assemblyName.Version.Minor);
+
+            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
+            {
+                MessageBox.Show("ACOM Controller is already running on this PC.", "ACOM Controller");
+                Application.Current.Shutdown();
+            }
 
             // Hide error pop up
             errorTextButton.Visibility = Visibility.Hidden;
