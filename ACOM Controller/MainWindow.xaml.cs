@@ -85,7 +85,7 @@ namespace ACOM_Controller
             // Hide error pop up
             errorTextButton.Visibility = Visibility.Hidden;
 
-            Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel);
+            Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel, Settings.Default.AlwaysOnTop);
 
             // Fetch window location from saved settings
             Top = Settings.Default.Top;
@@ -116,7 +116,7 @@ namespace ACOM_Controller
                 Port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
         }
 
-        public void Configuration(string comPort, string ampModel)
+        public void Configuration(string comPort, string ampModel, bool alwaysontop)
         {
             try
             {
@@ -167,6 +167,7 @@ namespace ACOM_Controller
 
             Settings.Default.AmplifierModel = ampModel;
             Settings.Default.ComPort = comPort;
+            Settings.Default.AlwaysOnTop = alwaysontop;
             Settings.Default.Save();
 
             programTitle = "ACOM " + ampModel + " Controller" + Release + "(" 
@@ -176,6 +177,7 @@ namespace ACOM_Controller
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 ProgramWindow.Title = programTitle;
+                ProgramWindow.Topmost = alwaysontop;
                 pwrBar.Maximum = NominalForwardPower;
                 pwrBar_Peak.Maximum = MaxForwardPower - NominalForwardPower;
                 reflBar.Maximum = NominalReversePower;
@@ -520,7 +522,7 @@ namespace ACOM_Controller
 
         private void standbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort);
+            Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort, Settings.Default.AlwaysOnTop);
             configPanel.ShowDialog();
         }
     }

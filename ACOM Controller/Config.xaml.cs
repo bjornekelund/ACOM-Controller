@@ -6,7 +6,7 @@ namespace ACOM_Controller
     {
         MainWindow mainwindow;
 
-        public Config(MainWindow mw, string model, string port)
+        public Config(MainWindow mw, string model, string port, bool ontop)
         {
             InitializeComponent();
 
@@ -22,6 +22,8 @@ namespace ACOM_Controller
             for (int i = 1; i <= 30; i++)
                 portComboBox.Items.Add("COM" + i.ToString());
             portComboBox.SelectedItem = port;
+
+            onTopCheckBox.IsChecked = ontop;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -31,7 +33,7 @@ namespace ACOM_Controller
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            mainwindow.Configuration(portComboBox.Text, modelComboBox.Text);
+            mainwindow.Configuration(portComboBox.Text, modelComboBox.Text, (bool)onTopCheckBox.IsChecked);
             Close();
         }
     }

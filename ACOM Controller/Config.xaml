@@ -7,7 +7,9 @@
         mc:Ignorable="d"
         Title="Config" Height="115.688" Width="291.864" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="Manual" WindowStyle="None" Topmost="True">
     <Grid x:Name="Panel" Margin="10">
-        <GroupBox x:Name="GroupBox" Header="Configuration" HorizontalAlignment="Left" Height="106" Margin="-4,-9,0,0" VerticalAlignment="Top" Width="277"/>
+        <GroupBox x:Name="GroupBox" Header="Configuration" HorizontalAlignment="Left" Height="106" Margin="-4,-9,0,0" VerticalAlignment="Top" Width="277">
+            <CheckBox x:Name="onTopCheckBox" Content="On top" HorizontalAlignment="Left" Height="18" Margin="10,62,0,0" VerticalAlignment="Top"/>
+        </GroupBox>
 
         <ComboBox x:Name="modelComboBox" HorizontalAlignment="Left" Margin="7,36,0,0" VerticalAlignment="Top" Width="120"/>
         <ComboBox x:Name="portComboBox" HorizontalAlignment="Left" Margin="144,36,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="1.747,-1.152"/>
