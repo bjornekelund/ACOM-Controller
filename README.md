@@ -8,10 +8,9 @@ With the help of an ethernet serial port client and server or a serial port
 tunneling application like `com2tcp` it can also be used for geographically 
 remote operation. 
 
+Right-click the *Standby* button to access the configuration panel.
 Default configuration is for ACOM 600S with communication on COM4. 
 
-Right-click the *Standby* button to access the configuration panel.
-
-The app always stays on top to allow use with a full screen logger on a single screen.
+The can optionally always stay on top to e.g. allow use with a full screen logger on a single screen.
 
 For more information, visit www.sm7iun.se
