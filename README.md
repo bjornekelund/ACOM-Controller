@@ -11,6 +11,6 @@ remote operation.
 Right-click the *Standby* button to access the configuration panel.
 Default configuration is for ACOM 600S with communication on COM4. 
 
-The can optionally always stay on top to e.g. allow use with a full screen logger on a single screen.
+Can optionally always stay on top of other apps to e.g. allow use with a full screen logger on a single screen.
 
 For more information, visit www.sm7iun.se
