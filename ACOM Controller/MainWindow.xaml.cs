@@ -11,11 +11,11 @@ namespace ACOM_Controller
 {
     public partial class MainWindow : Window
     {
-        AssemblyName _assemblyName = Assembly.GetExecutingAssembly().GetName();
-        string Release;
+        readonly AssemblyName _assemblyName = Assembly.GetExecutingAssembly().GetName();
+        readonly string Release;
 
         const byte msglen = 72;
-        byte[] msg = new byte[msglen];
+        readonly byte[] msg = new byte[msglen];
         byte msgpos = 0;
         bool parsing = false; // true while receiving a message
 
@@ -26,33 +26,34 @@ namespace ACOM_Controller
         readonly byte[] CommandStandby = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x05, 0x00, 0x1B };
         readonly byte[] CommandOff = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x0A, 0x00, 0x16 };
 
-        readonly string[] BandName = new string[16] { "?m", "160m", "80m", "40/60m", "30m", "20m", "17m", "15m", "12m", "10m", "6m", "?m", "?m", "?m", "?m", "?m"};
+        readonly string[] BandName = new string[16] { "?m", "160m", "80m", "40/60m", "30m", "20m", 
+            "17m", "15m", "12m", "10m", "6m", "?m", "?m", "?m", "?m", "?m"};
 
         int PAstatus = 0;
         int PAtemp = 0; // PA temperature
         int PAfan = 0; // PAM fan state, 0 = off
 
         const int PApowerPeakMemory = 10;
-        int PApowerPeakIndex = 0; 
-        double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power reports
+        int PApowerPeakIndex = 0;
+        readonly double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power 
         double PApowerCurrent; // Current PA power
         double PApowerDisplay = 0; // Filtered PA output power
 
         const int DrivePowerPeakMemory = 10;
         int DrivePowerPeakIndex = 0;
-        double[] DrivePower = new double[DrivePowerPeakMemory]; // Array for filtering PA power reports
+        readonly double[] DrivePower = new double[DrivePowerPeakMemory]; // Array for filtering drive power 
         double DrivePowerCurrent; // Current PA power
         double DrivePowerDisplay = 0; // Filtered PA output power
 
         const int ReflectedPowerPeakMemory = 10;
         int ReflectedPowerPeakIndex = 0;
-        double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering reflected power reports
+        readonly double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering reflected power 
         double ReflectedPowerCurrent; // Current reflected power
         double ReflectedPowerDisplay = 0; // Filtered reflected power
 
         const int swrPeakMemory = 8;
         int swrPeakIndex = 0;
-        double[] swrValue = new double[swrPeakMemory]; // Array for filtering SWR reports
+        readonly double[] swrValue = new double[swrPeakMemory]; // Array for filtering SWR reports
         double swrCurrent; // Current SWR
         double swrDisplay = 0; // Filtered SWR 
 
@@ -156,7 +157,7 @@ namespace ACOM_Controller
                     MaxReversePower = 300.0;
                     break;
                 default:
-                    // Default to ACOM 600S if config file has been corrupted
+                    // Default to ACOM 600S, also if config file has been corrupted
                     ampModel = "600S";
                     NominalForwardPower = 600.0;
                     MaxForwardPower = 700.0;
@@ -484,11 +485,11 @@ namespace ACOM_Controller
         // Executed repeatedly 
         void OnTimer(object sender, EventArgs e)
         {
-            // Re-enable PA telemetry on every timer click to ensure status info after startup
-            if (portIsOpen)
-                Port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
-
             if (!linkIsAlive)
+            {
+                // Re-enable PA telemetry on every timer click to ensure status info after startup
+                if (portIsOpen)
+                    Port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     bandLabel.Content = "--m";
@@ -508,7 +509,8 @@ namespace ACOM_Controller
                     statusLabel.Foreground = Brushes.Gray;
                     statusLabel.Content = "OFF";
                 }));
-            
+            }
+
             linkIsAlive = false;
         }
 
@@ -520,7 +522,7 @@ namespace ACOM_Controller
                 Port.Write(CommandOperate, 0, CommandOperate.Length);
         }
 
-        private void standbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void StandbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort, Settings.Default.AlwaysOnTop);
             configPanel.ShowDialog();
