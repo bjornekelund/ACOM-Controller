@@ -100,7 +100,7 @@ namespace ACOM_Controller
             // use a periodic timer to constantly re-enable telemetry
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(OnTimer);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 2000);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
             dispatcherTimer.Start();
         }
 
