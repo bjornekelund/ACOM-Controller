@@ -129,7 +129,7 @@ namespace ACOM_Controller
 
             portIsOpen = false;
 
-            // Default to COM4 if config file has been corrupted
+            // Default to COM4 if config file is invalid
             Port = new SerialPort(comPort == "" ? "COM4" : comPort, 9600, Parity.None, 8, StopBits.One);
 
             try
@@ -157,7 +157,7 @@ namespace ACOM_Controller
                     MaxReversePower = 300.0;
                     break;
                 default:
-                    // Default to ACOM 600S, also if config file has been corrupted
+                    // Default to ACOM 600S, also if config file is invalid
                     ampModel = "600S";
                     NominalForwardPower = 600.0;
                     MaxForwardPower = 700.0;
@@ -185,12 +185,14 @@ namespace ACOM_Controller
                 reflBar_Peak.Maximum = MaxReversePower - NominalReversePower;
             }));
 
-            // Send enable telemetry command to PA
+            // Send enable telemetry command to PA if port successfully opened
             if (portIsOpen)
+            {
                 Port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
 
-            // Enable event handler for serial data received
-            Port.DataReceived += Port_OnReceiveData; // DataReceived Event Handler
+                // Enable event handler for serial data received
+                Port.DataReceived += Port_OnReceiveData; // DataReceived Event Handler
+            }
         }
 
         // Event handler for received data
