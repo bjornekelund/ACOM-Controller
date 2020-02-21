@@ -82,5 +82,17 @@ namespace ACOM_Controller.Properties {
                 this["AlwaysOnTop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NoPopup {
+            get {
+                return ((bool)(this["NoPopup"]));
+            }
+            set {
+                this["NoPopup"] = value;
+            }
+        }
     }
 }

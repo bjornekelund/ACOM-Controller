@@ -79,14 +79,15 @@ namespace ACOM_Controller
 
             if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
             {
-                MessageBox.Show("ACOM Controller is already running on this PC.", "ACOM Controller");
+                if (!Settings.Default.NoPopup)
+                    MessageBox.Show("ACOM Controller is already running on this PC.", "ACOM Controller");
                 Application.Current.Shutdown();
             }
 
             // Hide error pop up
             errorTextButton.Visibility = Visibility.Hidden;
 
-            Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel, Settings.Default.AlwaysOnTop);
+            Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel, Settings.Default.AlwaysOnTop, Settings.Default.NoPopup);
 
             // Fetch window location from saved settings
             Top = Settings.Default.Top;
@@ -117,7 +118,7 @@ namespace ACOM_Controller
                 Port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
         }
 
-        public void Configuration(string comPort, string ampModel, bool alwaysontop)
+        public void Configuration(string comPort, string ampModel, bool alwaysontop, bool nopopup)
         {
             try
             {
@@ -169,6 +170,7 @@ namespace ACOM_Controller
             Settings.Default.AmplifierModel = ampModel;
             Settings.Default.ComPort = comPort;
             Settings.Default.AlwaysOnTop = alwaysontop;
+            Settings.Default.NoPopup = nopopup;
             Settings.Default.Save();
 
             programTitle = "ACOM " + ampModel + " Controller" + Release + "(" 
@@ -526,7 +528,7 @@ namespace ACOM_Controller
 
         private void StandbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort, Settings.Default.AlwaysOnTop);
+            Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort, Settings.Default.AlwaysOnTop, Settings.Default.NoPopup);
             configPanel.ShowDialog();
         }
     }

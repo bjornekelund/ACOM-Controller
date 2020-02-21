@@ -6,7 +6,7 @@ namespace ACOM_Controller
     {
         MainWindow mainwindow;
 
-        public Config(MainWindow mw, string model, string port, bool ontop)
+        public Config(MainWindow mw, string model, string port, bool ontop, bool nopopup)
         {
             InitializeComponent();
 
@@ -24,6 +24,7 @@ namespace ACOM_Controller
             portComboBox.SelectedItem = port;
 
             onTopCheckBox.IsChecked = ontop;
+            silentCheckBox.IsChecked = nopopup;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -33,7 +34,7 @@ namespace ACOM_Controller
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            mainwindow.Configuration(portComboBox.Text, modelComboBox.Text, (bool)onTopCheckBox.IsChecked);
+            mainwindow.Configuration(portComboBox.Text, modelComboBox.Text, (bool)onTopCheckBox.IsChecked, (bool)silentCheckBox.IsChecked);
             Close();
         }
     }
