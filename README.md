@@ -13,4 +13,6 @@ Default configuration is for ACOM 600S with communication on COM4.
 
 Can optionally always stay on top of other apps to e.g. allow use with a full screen logger on a single screen.
 
+The "Do nothing if already running" option silently the program at start up if another copy is already running.
+
 For more information, visit www.sm7iun.se
