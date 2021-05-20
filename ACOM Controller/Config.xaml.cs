@@ -16,6 +16,7 @@ namespace ACOM_Controller
             mainwindow = mw;
             modelComboBox.Items.Add("600S");
             modelComboBox.Items.Add("700S");
+            modelComboBox.Items.Add("1000S");
             modelComboBox.Items.Add("1200S");
             modelComboBox.SelectedItem = model;
 

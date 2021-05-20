@@ -151,6 +151,12 @@ namespace ACOM_Controller
                     NominalReversePower = 129.0;
                     MaxReversePower = 170.0;
                     break;
+                case "1000S":
+                    NominalForwardPower = 1000.0;
+                    MaxForwardPower = 1200.0;
+                    NominalReversePower = 290.0;
+                    MaxReversePower = 250.0;
+                    break;
                 case "1200S":
                     NominalForwardPower = 1200.0;
                     MaxForwardPower = 1400.0;
