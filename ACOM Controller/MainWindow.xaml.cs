@@ -145,6 +145,12 @@ namespace ACOM_Controller
 
             switch (ampModel)
             {
+                case "500S":
+                    NominalForwardPower = 500.0;
+                    MaxForwardPower = 600.0;
+                    NominalReversePower = 99.0;
+                    MaxReversePower = 130.0;
+                    break;
                 case "700S":
                     NominalForwardPower = 700.0;
                     MaxForwardPower = 800.0;

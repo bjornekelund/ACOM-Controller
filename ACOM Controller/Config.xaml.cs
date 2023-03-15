@@ -14,6 +14,7 @@ namespace ACOM_Controller
             Left = mw.Left + 50;
 
             mainwindow = mw;
+            modelComboBox.Items.Add("500S");
             modelComboBox.Items.Add("600S");
             modelComboBox.Items.Add("700S");
             modelComboBox.Items.Add("1000S");
