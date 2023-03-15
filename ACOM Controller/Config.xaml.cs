@@ -4,7 +4,7 @@ namespace ACOM_Controller
 {
     public partial class Config : Window
     {
-        MainWindow mainwindow;
+        private MainWindow mainwindow;
 
         public Config(MainWindow mw, string model, string port, bool ontop, bool nopopup)
         {
@@ -22,7 +22,10 @@ namespace ACOM_Controller
             modelComboBox.SelectedItem = model;
 
             for (int i = 1; i <= 30; i++)
+            {
                 portComboBox.Items.Add("COM" + i.ToString());
+            }
+
             portComboBox.SelectedItem = port;
 
             onTopCheckBox.IsChecked = ontop;

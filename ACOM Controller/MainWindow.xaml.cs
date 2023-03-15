@@ -26,8 +26,8 @@ namespace ACOM_Controller
         readonly byte[] CommandStandby = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x05, 0x00, 0x1B };
         readonly byte[] CommandOff = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x0A, 0x00, 0x16 };
 
-        readonly string[] BandName = new string[16] { "?m", "160m", "80m", "40/60m", "30m", "20m", 
-            "17m", "15m", "12m", "10m", "6m", "?m", "?m", "?m", "?m", "?m"};
+        readonly string[] BandName = new string[16] { "?m", "160m", "80m", "40/60m", "30m", "20m",
+            "17m", "15m", "12m", "10m", "6m", "4m", "?m", "?m", "?m", "?m"};
 
         int PAstatus = 0;
         int PAtemp = 0; // PA temperature
@@ -80,7 +80,10 @@ namespace ACOM_Controller
             if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
             {
                 if (!Settings.Default.NoPopup)
+                {
                     MessageBox.Show("ACOM Controller is already running on this PC.", "ACOM Controller");
+                }
+
                 Application.Current.Shutdown();
             }
 
@@ -106,7 +109,7 @@ namespace ACOM_Controller
         }
 
         // Clean up and housekeeping at program shutdown
-        void MainWindow_Closed(object sender, EventArgs e) 
+        private void MainWindow_Closed(object sender, EventArgs e) 
         {
             // Remember window location 
             Settings.Default.Top = Top;
@@ -115,7 +118,9 @@ namespace ACOM_Controller
 
             // Send disable telemetry command to PA
             if (portIsOpen)
+            {
                 Port.Write(CommandDisableTelemetry, 0, CommandDisableTelemetry.Length);
+            }
         }
 
         public void Configuration(string comPort, string ampModel, bool alwaysontop, bool nopopup)
@@ -252,7 +257,9 @@ namespace ACOM_Controller
                             // decode
                             byte checksum = 0;
                             foreach (byte c in msg)
+                            {
                                 checksum += c;
+                            }
 
                             // checksum zero => a real message - get parameters and update UI
                             if (checksum == 0) 
@@ -351,14 +358,22 @@ namespace ACOM_Controller
                                         DrivePowerCurrent = msg[20] + msg[21] * 256.0;
                                         DrivePower[DrivePowerPeakIndex++] = DrivePowerCurrent; // save current power in fifo
                                         DrivePowerDisplay = DrivePower.Max() / 10.0;
-                                        if (DrivePowerPeakIndex >= DrivePowerPeakMemory) DrivePowerPeakIndex = 0;  // wrap around
+                                        if (DrivePowerPeakIndex >= DrivePowerPeakMemory)
+                                        {
+                                            DrivePowerPeakIndex = 0;  // wrap around
+                                        }
+
                                         driveLabel.Content = DrivePowerDisplay.ToString("0") + "W";
 
                                         // Filter reflected power data 
                                         ReflectedPowerCurrent = msg[24] + msg[25] * 256.0;
                                         ReflectedPower[ReflectedPowerPeakIndex++] = ReflectedPowerCurrent; // save current power in fifo
                                         ReflectedPowerDisplay = ReflectedPower.Max();
-                                        if (ReflectedPowerPeakIndex >= ReflectedPowerPeakMemory) ReflectedPowerPeakIndex = 0;  // wrap around
+                                        if (ReflectedPowerPeakIndex >= ReflectedPowerPeakMemory)
+                                        {
+                                            ReflectedPowerPeakIndex = 0;  // wrap around
+                                        }
+
                                         reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
                                         
                                         // Lower part of the reflected bar in gray
@@ -373,18 +388,30 @@ namespace ACOM_Controller
                                         swrCurrent = (msg[26] + msg[27] * 256) / 100.0;
                                         swrValue[swrPeakIndex++] = swrCurrent; // save current power in fifo
                                         swrDisplay= swrValue.Max();
-                                        if (swrPeakIndex>= swrPeakMemory) swrPeakIndex = 0;  // wrap around
+                                        if (swrPeakIndex>= swrPeakMemory)
+                                        {
+                                            swrPeakIndex = 0;  // wrap around
+                                        }
+
                                         if (swrDisplay != 0)
+                                        {
                                             swrLabel.Content = swrDisplay.ToString("0.00");
+                                        }
                                         else
+                                        {
                                             swrLabel.Content = "";
+                                        }
 
                                         // Filter output power data 
                                         // Add 2% to align better with PA's own display, unclear why
                                         PApowerCurrent = 1.02 * (msg[22] + msg[23] * 256);
                                         PApower[PApowerPeakIndex++] = PApowerCurrent; // save current power in fifo
                                         PApowerDisplay = PApower.Max();
-                                        if (PApowerPeakIndex >= PApowerPeakMemory) PApowerPeakIndex = 0;  // wrap around
+                                        if (PApowerPeakIndex >= PApowerPeakMemory)
+                                        {
+                                            PApowerPeakIndex = 0;  // wrap around
+                                        }
+
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
                                         // Lower part of the bar in blue
@@ -401,7 +428,9 @@ namespace ACOM_Controller
                                         errorCode = msg[66];
                                         //errorTextButton.Content = string.Format("code: {0}\nparameter: {1}", errorCode, errorParameter);
                                         if (errorCode == 0xff)
+                                        {
                                             errorTextButton.Visibility = Visibility.Hidden;
+                                        }
                                         else 
                                         { // We have an error or warning condition
                                             errorTextButton.Visibility = Visibility.Visible;
@@ -475,37 +504,46 @@ namespace ACOM_Controller
         }
 
         // At click on standby button
-        void StandbyClick(object sender, RoutedEventArgs e)
+        private void StandbyClick(object sender, RoutedEventArgs e)
         {
             // Send Standby command to PA
             if (portIsOpen)
-                Port.Write(CommandStandby, 0, CommandStandby.Length); 
+            {
+                Port.Write(CommandStandby, 0, CommandStandby.Length);
+            }
         }
 
         // At click on operate button
-        void OperateClick(object sender, RoutedEventArgs e)
+        private void OperateClick(object sender, RoutedEventArgs e)
         {
             // Send Operate command to PA
             if (portIsOpen)
-                Port.Write(CommandOperate, 0, CommandOperate.Length);  
+            {
+                Port.Write(CommandOperate, 0, CommandOperate.Length);
+            }
         }
 
         // At click on off button
-        void OffClick(object sender, RoutedEventArgs e)
+        private void OffClick(object sender, RoutedEventArgs e)
         {
             // Send Off command to PA
             if (portIsOpen)
-                Port.Write(CommandOff, 0, CommandOff.Length);  
+            {
+                Port.Write(CommandOff, 0, CommandOff.Length);
+            }
         }
 
         // Executed repeatedly 
-        void OnTimer(object sender, EventArgs e)
+        private void OnTimer(object sender, EventArgs e)
         {
             if (!linkIsAlive)
             {
                 // Re-enable PA telemetry on every timer click to ensure status info after startup
                 if (portIsOpen)
+                {
                     Port.Write(CommandEnableTelemetry, 0, CommandEnableTelemetry.Length);
+                }
+
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     bandLabel.Content = "--m";
@@ -535,7 +573,9 @@ namespace ACOM_Controller
             errorTextButton.Visibility = Visibility.Hidden;
             // Send Operate command to PA
             if (portIsOpen)
+            {
                 Port.Write(CommandOperate, 0, CommandOperate.Length);
+            }
         }
 
         private void StandbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
