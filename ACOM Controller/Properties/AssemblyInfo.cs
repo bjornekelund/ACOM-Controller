@@ -6,11 +6,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ACOM Controller")]
-[assembly: AssemblyDescription("ACOM Solid State power amplifier control application")]
+[assembly: AssemblyDescription("ACOM solid state power amplifier control application")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SM7IUN")]
 [assembly: AssemblyProduct("ACOM Controller")]
-[assembly: AssemblyCopyright("Copyright © Björn Ekelund 2023")]
+[assembly: AssemblyCopyright("© Björn Ekelund SM7IUN 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -49,5 +49,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.2.2.0")]
-[assembly: AssemblyFileVersion("2.2.2.0")]
+[assembly: AssemblyVersion("2.3.0.0")]
+[assembly: AssemblyFileVersion("2.3.0.0")]
