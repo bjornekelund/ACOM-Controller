@@ -19,6 +19,7 @@ namespace ACOM_Controller
             modelComboBox.Items.Add("700S");
             modelComboBox.Items.Add("1000S");
             modelComboBox.Items.Add("1200S");
+            modelComboBox.Items.Add("2020S");
             modelComboBox.SelectedItem = model;
 
             for (int i = 1; i <= 30; i++)

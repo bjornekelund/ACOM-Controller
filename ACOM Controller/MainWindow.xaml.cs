@@ -174,6 +174,12 @@ namespace ACOM_Controller
                     NominalReversePower = 228.0;
                     MaxReversePower = 300.0;
                     break;
+                case "2020S":
+                    NominalForwardPower = 1500.0;
+                    MaxForwardPower = 2000.0;
+                    NominalReversePower = 228.0;
+                    MaxReversePower = 300.0;
+                    break;
                 default:
                     // Default to ACOM 600S, also if config file is invalid
                     ampModel = "600S";
