@@ -345,12 +345,12 @@ namespace ACOM_Controller
                                                 fanLabel.Foreground = Brushes.Gray;
                                                 break;
                                             case 3:
-                                                tempBar.Foreground = Brushes.Yellow;
+                                                tempBar.Foreground = Brushes.Green;
                                                 fanLabel.Content = "Fan 3";
                                                 fanLabel.Foreground = Brushes.DimGray;
                                                 break;
                                             case 4:
-                                                tempBar.Foreground = Brushes.Red;
+                                                tempBar.Foreground = Brushes.Orange;
                                                 fanLabel.Content = "FAN 4";
                                                 fanLabel.Foreground = Brushes.Black;
                                                 break;
