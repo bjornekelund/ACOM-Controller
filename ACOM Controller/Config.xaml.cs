@@ -4,7 +4,7 @@ namespace ACOM_Controller
 {
     public partial class Config : Window
     {
-        private MainWindow mainwindow;
+        MainWindow mainwindow;
 
         public Config(MainWindow mw, string model, string port, bool ontop, bool nopopup)
         {

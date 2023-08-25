@@ -387,28 +387,6 @@ namespace ACOM_Controller
                                         swrValue[swrPeakIndex++] = swrCurrent; // save current power in fifo
                                         swrPeakIndex = swrPeakIndex % swrPeakMemory; // wrap around
 
-                                        // Calculate average of recent non-zero SWR reports
-                                        double swrAverageSum = 0.0;
-                                        int swrNonZeroCount = 0;
-                                        for (int i = 0; i < swrPeakMemory; i++)
-                                        {
-                                            if (swrValue[i] > 0)
-                                            {
-                                                swrAverageSum += swrValue[i];
-                                                swrNonZeroCount++;
-                                            }
-                                        }
-                                        swrDisplay = swrAverageSum / swrNonZeroCount;
-
-                                        if (swrDisplay > 0)
-                                        {
-                                            swrLabel.Content = swrDisplay.ToString("0.0");
-                                        }
-                                        else
-                                        {
-                                            swrLabel.Content = "";
-                                        }
-
                                         // Filter output power data 
                                         PApowerCurrent = messageBytes[22] + messageBytes[23] * 256;
                                         PApower[PApowerPeakIndex++] = PApowerCurrent; // save current power in fifo
@@ -426,6 +404,28 @@ namespace ACOM_Controller
                                         // Upper part of the bar in red
                                         pwrBar_Peak.Value = (PApowerDisplayBar > NominalForwardPower) ? PApowerDisplayBar - NominalForwardPower : 0.0;
                                         pwrBar_Peak.Foreground = Brushes.Crimson;
+
+                                        // Calculate average of recent non-zero SWR reports
+                                        double swrAverageSum = 0.0;
+                                        int swrNonZeroCount = 0;
+                                        for (int i = 0; i < swrPeakMemory; i++)
+                                        {
+                                            if (swrValue[i] > 0)
+                                            {
+                                                swrAverageSum += swrValue[i];
+                                                swrNonZeroCount++;
+                                            }
+                                        }
+                                        swrDisplay = swrAverageSum / swrNonZeroCount;
+
+                                        if (swrDisplay > 0 && PApowerDisplay > 0)
+                                        {
+                                            swrLabel.Content = swrDisplay.ToString("0.0");
+                                        }
+                                        else
+                                        {
+                                            swrLabel.Content = "";
+                                        }
 
                                         // Show active LPF as text
                                         bandLabel.Content = BandName[messageBytes[69] & 0x0f];
