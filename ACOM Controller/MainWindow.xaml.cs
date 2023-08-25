@@ -420,7 +420,7 @@ namespace ACOM_Controller
 
                                         if (swrDisplay > 0 && PApowerDisplay > 0)
                                         {
-                                            swrLabel.Content = swrDisplay.ToString("0.0");
+                                            swrLabel.Content = swrDisplay.ToString("0.00");
                                         }
                                         else
                                         {
