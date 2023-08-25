@@ -11,19 +11,19 @@ namespace ACOM_Controller
 {
     public partial class MainWindow : Window
     {
-        readonly AssemblyName _assemblyName = Assembly.GetExecutingAssembly().GetName();
-        readonly string Release;
+        AssemblyName _assemblyName = Assembly.GetExecutingAssembly().GetName();
+        string Release;
 
         const byte msglen = 72;
-        readonly byte[] msg = new byte[msglen];
+        byte[] messageBytes = new byte[msglen];
         byte msgpos = 0;
         bool parsing = false; // true while receiving a message
 
         readonly byte[] CommandEnableTelemetry = new byte[] { 0x55, 0x92, 0x04, 0x15 };
         readonly byte[] CommandDisableTelemetry = new byte[] { 0x55, 0x91, 0x04, 0x16 };
 
-        readonly byte[] CommandOperate = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x06, 0x00, 0x1A };
-        readonly byte[] CommandStandby = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x05, 0x00, 0x1B };
+        readonly byte[] CommandOperate = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x06, 0x00, 0x1a };
+        readonly byte[] CommandStandby = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x05, 0x00, 0x1b };
         readonly byte[] CommandOff = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x0A, 0x00, 0x16 };
 
         readonly string[] BandName = new string[16] { "?m", "160m", "80m", "40/60m", "30m", "20m",
@@ -35,26 +35,26 @@ namespace ACOM_Controller
 
         const int PApowerPeakMemory = 10;
         int PApowerPeakIndex = 0;
-        readonly double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power 
+        double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power 
         double PApowerCurrent; // Current PA power
         double PApowerDisplay = 0; // Filtered PA output power
         double PApowerDisplayBar = 0; // Filtered PA output power, increased by 2% for graphics
 
         const int DrivePowerPeakMemory = 10;
         int DrivePowerPeakIndex = 0;
-        readonly double[] DrivePower = new double[DrivePowerPeakMemory]; // Array for filtering drive power 
+        double[] DrivePower = new double[DrivePowerPeakMemory]; // Array for filtering drive power 
         double DrivePowerCurrent; // Current PA power
         double DrivePowerDisplay = 0; // Filtered PA output power
 
         const int ReflectedPowerPeakMemory = 10;
         int ReflectedPowerPeakIndex = 0;
-        readonly double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering reflected power 
+        double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering reflected power 
         double ReflectedPowerCurrent; // Current reflected power
         double ReflectedPowerDisplay = 0; // Filtered reflected power
 
         const int swrPeakMemory = 8;
         int swrPeakIndex = 0;
-        readonly double[] swrValue = new double[swrPeakMemory]; // Array for filtering SWR reports
+        double[] swrValue = new double[swrPeakMemory]; // Array for filtering SWR reports
         double swrCurrent; // Current SWR
         double swrDisplay = 0; // Filtered SWR 
 
@@ -244,15 +244,15 @@ namespace ACOM_Controller
                 {
                     msgpos = 0;
                     parsing = true;
-                    msg[msgpos++] = b;
+                    messageBytes[msgpos++] = b;
                 }
                 else if (parsing)
                 {
-                    msg[msgpos++] = b;
+                    messageBytes[msgpos++] = b;
 
                     // 0x2f is second byte in telemetry datagram. 
                     // If not a telemetry message, reset parser
-                    if (msg[1] != 0x2f)
+                    if (messageBytes[1] != 0x2f)
                     {
                         msgpos = 0;
                         parsing = false;
@@ -263,7 +263,7 @@ namespace ACOM_Controller
                         {
                             // decode
                             byte checksum = 0;
-                            foreach (byte c in msg)
+                            foreach (byte c in messageBytes)
                             {
                                 checksum += c;
                             }
@@ -271,7 +271,7 @@ namespace ACOM_Controller
                             // checksum zero => a real message - get parameters and update UI
                             if (checksum == 0)
                             {
-                                PAstatus = (msg[3] & 0xF0) >> 4; // extract data from message
+                                PAstatus = (messageBytes[3] & 0xf0) >> 4; // extract data from message
 
                                 // Updates to UI needs to be done in main thread
                                 Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -321,18 +321,15 @@ namespace ACOM_Controller
                                     }
 
                                     // Temperature bar with fan status 
-                                    PAtemp = msg[16] + msg[17] * 256 - 273; // extract data from message
-                                    PAfan = (msg[69] & 0xF0) >> 4;
+                                    PAtemp = messageBytes[16] + messageBytes[17] * 256 - 273; // extract data from message
+                                    PAfan = (messageBytes[69] & 0xf0) >> 4;
 
-                                    if (PAstatus != 10) // PAstatus == 10 means in powering down mode
+                                    if (PAstatus != 10) // PAstatus 10 means in powering down mode
                                     {
-                                        if (PAtemp >= 0 & PAtemp <= 100) // safety for corrupted reads
-                                        {
-                                            tempLabel.Content = PAtemp.ToString() + "C";
-                                            tempBar.Value = PAtemp;
-                                        }
+                                        tempLabel.Content = PAtemp.ToString() + "C";
+                                        tempBar.Value = PAtemp;
 
-                                        // Change color on temp bar on higher fan speeds
+                                        // Change color on temp bar and label at higher fan speeds
                                         switch (PAfan)
                                         {
                                             case 1:
@@ -351,7 +348,7 @@ namespace ACOM_Controller
                                                 fanLabel.Foreground = Brushes.Black;
                                                 break;
                                             case 4:
-                                                tempBar.Foreground = Brushes.Green;
+                                                tempBar.Foreground = Brushes.Lime;
                                                 fanLabel.Content = "FAN 4";
                                                 fanLabel.Foreground = Brushes.Black;
                                                 break;
@@ -362,7 +359,7 @@ namespace ACOM_Controller
                                         }
 
                                         // Filter and display drive power data 
-                                        DrivePowerCurrent = msg[20] + msg[21] * 256.0;
+                                        DrivePowerCurrent = messageBytes[20] + messageBytes[21] * 256.0;
                                         DrivePower[DrivePowerPeakIndex++] = DrivePowerCurrent; // save current power in fifo
                                         DrivePowerDisplay = DrivePower.Max() / 10.0;
                                         DrivePowerPeakIndex = DrivePowerPeakIndex % DrivePowerPeakMemory; // wrap around
@@ -370,7 +367,7 @@ namespace ACOM_Controller
                                         driveLabel.Content = DrivePowerDisplay.ToString("0") + "W";
 
                                         // Filter reflected power data 
-                                        ReflectedPowerCurrent = msg[24] + msg[25] * 256.0;
+                                        ReflectedPowerCurrent = messageBytes[24] + messageBytes[25] * 256.0;
                                         ReflectedPower[ReflectedPowerPeakIndex++] = ReflectedPowerCurrent; // save current power in fifo
                                         ReflectedPowerPeakIndex = ReflectedPowerPeakIndex % ReflectedPowerPeakMemory; // wrap around
                                         ReflectedPowerDisplay = ReflectedPower.Max();
@@ -386,7 +383,7 @@ namespace ACOM_Controller
                                         reflBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Filter and display SWR data 
-                                        swrCurrent = (msg[26] + msg[27] * 256) / 100.0;
+                                        swrCurrent = (messageBytes[26] + messageBytes[27] * 256) / 100.0;
                                         swrValue[swrPeakIndex++] = swrCurrent; // save current power in fifo
                                         swrPeakIndex = swrPeakIndex % swrPeakMemory; // wrap around
 
@@ -413,12 +410,12 @@ namespace ACOM_Controller
                                         }
 
                                         // Filter output power data 
-                                        // Add 2% to align graphics better with PA's own display
-                                        PApowerCurrent = msg[22] + msg[23] * 256;
+                                        PApowerCurrent = messageBytes[22] + messageBytes[23] * 256;
                                         PApower[PApowerPeakIndex++] = PApowerCurrent; // save current power in fifo
                                         PApowerPeakIndex = PApowerPeakIndex % PApowerPeakMemory; // wrap around
+
                                         PApowerDisplay = PApower.Max();
-                                        PApowerDisplayBar = PApowerDisplay * 1.02;
+                                        PApowerDisplayBar = PApowerDisplay * 1.02; // Add 2% to align graphics better with PA's own display
 
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
@@ -431,9 +428,9 @@ namespace ACOM_Controller
                                         pwrBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Show active LPF as text
-                                        bandLabel.Content = BandName[msg[69] & 0x0F];
+                                        bandLabel.Content = BandName[messageBytes[69] & 0x0f];
 
-                                        errorCode = msg[66];
+                                        errorCode = messageBytes[66];
                                         //errorTextButton.Content = string.Format("code: {0}\nparameter: {1}", errorCode, errorParameter);
                                         if (errorCode == 0xff)
                                         {
@@ -497,7 +494,7 @@ namespace ACOM_Controller
                                         tempLabel.Content = "--C";
                                         tempBar.Value = 0.0;
 
-                                        pwrLabel.Content = "---W";
+                                        pwrLabel.Content = "--W";
                                         pwrBar.Value = 0.0;
                                         pwrBar_Peak.Value = 0.0;
                                     }
@@ -564,7 +561,7 @@ namespace ACOM_Controller
                     tempLabel.Content = "--C";
                     tempBar.Value = 0.0;
 
-                    pwrLabel.Content = "---W";
+                    pwrLabel.Content = "--W";
                     pwrBar.Value = 0.0;
                     pwrBar_Peak.Value = 0.0;
 
