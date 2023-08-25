@@ -38,6 +38,7 @@ namespace ACOM_Controller
         readonly double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power 
         double PApowerCurrent; // Current PA power
         double PApowerDisplay = 0; // Filtered PA output power
+        double PApowerDisplayBar = 0; // Filtered PA output power, increased by 2% for graphics
 
         const int DrivePowerPeakMemory = 10;
         int DrivePowerPeakIndex = 0;
@@ -70,7 +71,7 @@ namespace ACOM_Controller
         bool linkIsAlive = false;
 
         SerialPort Port;
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -109,7 +110,7 @@ namespace ACOM_Controller
         }
 
         // Clean up and housekeeping at program shutdown
-        private void MainWindow_Closed(object sender, EventArgs e) 
+        private void MainWindow_Closed(object sender, EventArgs e)
         {
             // Remember window location 
             Settings.Default.Top = Top;
@@ -196,7 +197,7 @@ namespace ACOM_Controller
             Settings.Default.NoPopup = nopopup;
             Settings.Default.Save();
 
-            programTitle = "ACOM " + ampModel + " Controller" + Release + "(" 
+            programTitle = "ACOM " + ampModel + " Controller" + Release + "("
                 + comPort + (portIsOpen ? ")" : " - failed to open)");
 
             // UI changes has to be made on main thread
@@ -239,7 +240,7 @@ namespace ACOM_Controller
                 // other datagrams from PA, the current implementation should be safe.
 
                 // 0x55 is first byte in telemetry message
-                if (!parsing & (b == 0x55)) 
+                if (!parsing & (b == 0x55))
                 {
                     msgpos = 0;
                     parsing = true;
@@ -251,7 +252,7 @@ namespace ACOM_Controller
 
                     // 0x2f is second byte in telemetry datagram. 
                     // If not a telemetry message, reset parser
-                    if (msg[1] != 0x2f) 
+                    if (msg[1] != 0x2f)
                     {
                         msgpos = 0;
                         parsing = false;
@@ -268,7 +269,7 @@ namespace ACOM_Controller
                             }
 
                             // checksum zero => a real message - get parameters and update UI
-                            if (checksum == 0) 
+                            if (checksum == 0)
                             {
                                 PAstatus = (msg[3] & 0xF0) >> 4; // extract data from message
 
@@ -347,10 +348,10 @@ namespace ACOM_Controller
                                             case 3:
                                                 tempBar.Foreground = Brushes.Green;
                                                 fanLabel.Content = "Fan 3";
-                                                fanLabel.Foreground = Brushes.DimGray;
+                                                fanLabel.Foreground = Brushes.Black;
                                                 break;
                                             case 4:
-                                                tempBar.Foreground = Brushes.Orange;
+                                                tempBar.Foreground = Brushes.Green;
                                                 fanLabel.Content = "FAN 4";
                                                 fanLabel.Foreground = Brushes.Black;
                                                 break;
@@ -364,28 +365,22 @@ namespace ACOM_Controller
                                         DrivePowerCurrent = msg[20] + msg[21] * 256.0;
                                         DrivePower[DrivePowerPeakIndex++] = DrivePowerCurrent; // save current power in fifo
                                         DrivePowerDisplay = DrivePower.Max() / 10.0;
-                                        if (DrivePowerPeakIndex >= DrivePowerPeakMemory)
-                                        {
-                                            DrivePowerPeakIndex = 0;  // wrap around
-                                        }
+                                        DrivePowerPeakIndex = DrivePowerPeakIndex % DrivePowerPeakMemory; // wrap around
 
                                         driveLabel.Content = DrivePowerDisplay.ToString("0") + "W";
 
                                         // Filter reflected power data 
                                         ReflectedPowerCurrent = msg[24] + msg[25] * 256.0;
                                         ReflectedPower[ReflectedPowerPeakIndex++] = ReflectedPowerCurrent; // save current power in fifo
+                                        ReflectedPowerPeakIndex = ReflectedPowerPeakIndex % ReflectedPowerPeakMemory; // wrap around
                                         ReflectedPowerDisplay = ReflectedPower.Max();
-                                        if (ReflectedPowerPeakIndex >= ReflectedPowerPeakMemory)
-                                        {
-                                            ReflectedPowerPeakIndex = 0;  // wrap around
-                                        }
 
                                         reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
-                                        
+
                                         // Lower part of the reflected bar in gray
                                         reflBar.Value = (ReflectedPowerDisplay > NominalReversePower) ? NominalReversePower : ReflectedPowerDisplay;
                                         reflBar.Foreground = Brushes.Gray;
-                                        
+
                                         // Upper part of the reflected bar in red
                                         reflBar_Peak.Value = (ReflectedPowerDisplay > NominalReversePower) ? PApowerDisplay - NominalReversePower : 0;
                                         reflBar_Peak.Foreground = Brushes.Crimson;
@@ -393,15 +388,24 @@ namespace ACOM_Controller
                                         // Filter and display SWR data 
                                         swrCurrent = (msg[26] + msg[27] * 256) / 100.0;
                                         swrValue[swrPeakIndex++] = swrCurrent; // save current power in fifo
-                                        swrDisplay= swrValue.Max();
-                                        if (swrPeakIndex>= swrPeakMemory)
-                                        {
-                                            swrPeakIndex = 0;  // wrap around
-                                        }
+                                        swrPeakIndex = swrPeakIndex % swrPeakMemory; // wrap around
 
-                                        if (swrDisplay != 0)
+                                        // Calculate average of recent non-zero SWR reports
+                                        double swrAverageSum = 0.0;
+                                        int swrNonZeroCount = 0;
+                                        for (int i = 0; i < swrPeakMemory; i++)
                                         {
-                                            swrLabel.Content = swrDisplay.ToString("0.00");
+                                            if (swrValue[i] > 0)
+                                            {
+                                                swrAverageSum += swrValue[i];
+                                                swrNonZeroCount++;
+                                            }
+                                        }
+                                        swrDisplay = swrAverageSum / swrNonZeroCount;
+
+                                        if (swrDisplay > 0)
+                                        {
+                                            swrLabel.Content = swrDisplay.ToString("0.0");
                                         }
                                         else
                                         {
@@ -409,23 +413,21 @@ namespace ACOM_Controller
                                         }
 
                                         // Filter output power data 
-                                        // Add 2% to align better with PA's own display, unclear why
-                                        PApowerCurrent = 1.02 * (msg[22] + msg[23] * 256);
+                                        // Add 2% to align graphics better with PA's own display
+                                        PApowerCurrent = msg[22] + msg[23] * 256;
                                         PApower[PApowerPeakIndex++] = PApowerCurrent; // save current power in fifo
+                                        PApowerPeakIndex = PApowerPeakIndex % PApowerPeakMemory; // wrap around
                                         PApowerDisplay = PApower.Max();
-                                        if (PApowerPeakIndex >= PApowerPeakMemory)
-                                        {
-                                            PApowerPeakIndex = 0;  // wrap around
-                                        }
+                                        PApowerDisplayBar = PApowerDisplay * 1.02;
 
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
                                         // Lower part of the bar in blue
-                                        pwrBar.Value = (PApowerDisplay > NominalForwardPower) ? NominalForwardPower : PApowerDisplay;
+                                        pwrBar.Value = (PApowerDisplayBar > NominalForwardPower) ? NominalForwardPower : PApowerDisplayBar;
                                         pwrBar.Foreground = Brushes.RoyalBlue;
 
                                         // Upper part of the bar in red
-                                        pwrBar_Peak.Value = (PApowerDisplay > NominalForwardPower) ? PApowerDisplay - NominalForwardPower : 0.0;
+                                        pwrBar_Peak.Value = (PApowerDisplayBar > NominalForwardPower) ? PApowerDisplayBar - NominalForwardPower : 0.0;
                                         pwrBar_Peak.Foreground = Brushes.Crimson;
 
                                         // Show active LPF as text
@@ -437,7 +439,7 @@ namespace ACOM_Controller
                                         {
                                             errorTextButton.Visibility = Visibility.Hidden;
                                         }
-                                        else 
+                                        else
                                         { // We have an error or warning condition
                                             errorTextButton.Visibility = Visibility.Visible;
                                             switch (errorCode)
