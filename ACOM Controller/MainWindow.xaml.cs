@@ -63,7 +63,7 @@ namespace ACOM_Controller
         double NominalReversePower;
         double MaxReversePower;
 
-        double TemperatureOffset; // For calculating real temperature
+        int TemperatureOffset; // For calculating real temperature
 
         int errorCode; // Code for error message shown on PA's display
 
@@ -139,7 +139,7 @@ namespace ACOM_Controller
             portIsOpen = false;
 
             // Default to COM4 if config file is invalid
-            Port = new SerialPort(comPort == "" ? "COM4" : comPort, 9600, Parity.None, 8, StopBits.One);
+            Port = new SerialPort(comPort == "" ? "COM1" : comPort, 9600, Parity.None, 8, StopBits.One);
 
             try
             {
@@ -158,35 +158,35 @@ namespace ACOM_Controller
                     MaxForwardPower = 600.0;
                     NominalReversePower = 99.0;
                     MaxReversePower = 130.0;
-                    TemperatureOffset = 283.0;
+                    TemperatureOffset = 283;
                     break;
                 case "700S":
                     NominalForwardPower = 700.0;
                     MaxForwardPower = 800.0;
                     NominalReversePower = 129.0;
                     MaxReversePower = 170.0;
-                    TemperatureOffset = 283.0;
+                    TemperatureOffset = 283;
                     break;
                 case "1000S":
                     NominalForwardPower = 1000.0;
                     MaxForwardPower = 1200.0;
                     NominalReversePower = 190.0;
                     MaxReversePower = 250.0;
-                    TemperatureOffset = 283.0;
+                    TemperatureOffset = 283;
                     break;
                 case "1200S":
                     NominalForwardPower = 1200.0;
                     MaxForwardPower = 1400.0;
                     NominalReversePower = 228.0;
                     MaxReversePower = 300.0;
-                    TemperatureOffset = 283.0;
+                    TemperatureOffset = 283;
                     break;
                 case "2020S":
                     NominalForwardPower = 1500.0;
                     MaxForwardPower = 2000.0;
                     NominalReversePower = 228.0;
                     MaxReversePower = 300.0;
-                    TemperatureOffset = 273.0;
+                    TemperatureOffset = 273;
                     break;
                 default:
                     // Default to ACOM 600S, also if config file is invalid
@@ -195,7 +195,7 @@ namespace ACOM_Controller
                     MaxForwardPower = 700.0;
                     NominalReversePower = 114.0;
                     MaxReversePower = 150.0;
-                    TemperatureOffset = 273.0;
+                    TemperatureOffset = 273;
                     break;
             }
 
