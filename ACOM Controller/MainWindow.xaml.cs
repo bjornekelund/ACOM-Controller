@@ -52,7 +52,7 @@ namespace ACOM_Controller
         double ReflectedPowerCurrent; // Current reflected power
         double ReflectedPowerDisplay = 0; // Filtered reflected power
 
-        const int swrPeakMemory = 8;
+        const int swrPeakMemory = 10;
         int swrPeakIndex = 0;
         double[] swrValue = new double[swrPeakMemory]; // Array for filtering SWR reports
         double swrCurrent; // Current SWR
@@ -62,6 +62,8 @@ namespace ACOM_Controller
         double MaxForwardPower;
         double NominalReversePower;
         double MaxReversePower;
+
+        double TemperatureOffset; // For calculating real temperature
 
         int errorCode; // Code for error message shown on PA's display
 
@@ -156,30 +158,35 @@ namespace ACOM_Controller
                     MaxForwardPower = 600.0;
                     NominalReversePower = 99.0;
                     MaxReversePower = 130.0;
+                    TemperatureOffset = 283.0;
                     break;
                 case "700S":
                     NominalForwardPower = 700.0;
                     MaxForwardPower = 800.0;
                     NominalReversePower = 129.0;
                     MaxReversePower = 170.0;
+                    TemperatureOffset = 283.0;
                     break;
                 case "1000S":
                     NominalForwardPower = 1000.0;
                     MaxForwardPower = 1200.0;
                     NominalReversePower = 190.0;
                     MaxReversePower = 250.0;
+                    TemperatureOffset = 283.0;
                     break;
                 case "1200S":
                     NominalForwardPower = 1200.0;
                     MaxForwardPower = 1400.0;
                     NominalReversePower = 228.0;
                     MaxReversePower = 300.0;
+                    TemperatureOffset = 283.0;
                     break;
                 case "2020S":
                     NominalForwardPower = 1500.0;
                     MaxForwardPower = 2000.0;
                     NominalReversePower = 228.0;
                     MaxReversePower = 300.0;
+                    TemperatureOffset = 273.0;
                     break;
                 default:
                     // Default to ACOM 600S, also if config file is invalid
@@ -188,6 +195,7 @@ namespace ACOM_Controller
                     MaxForwardPower = 700.0;
                     NominalReversePower = 114.0;
                     MaxReversePower = 150.0;
+                    TemperatureOffset = 273.0;
                     break;
             }
 
@@ -321,7 +329,7 @@ namespace ACOM_Controller
                                     }
 
                                     // Temperature bar with fan status 
-                                    PAtemp = messageBytes[16] + messageBytes[17] * 256 - 273; // extract data from message
+                                    PAtemp = messageBytes[16] + messageBytes[17] * 256 - TemperatureOffset; // extract data from message
                                     PAfan = (messageBytes[69] & 0xf0) >> 4;
 
                                     if (PAstatus != 10) // PAstatus 10 means in powering down mode
