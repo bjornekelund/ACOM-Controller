@@ -64,6 +64,8 @@ namespace ACOM_Controller
         double MaxReversePower;
 
         int TemperatureOffset; // For calculating real temperature
+        bool ShowTemperature; // Whether PA shows temperature in digits
+        int WarningTemperature; // Temperature at which bar turns red
 
         int errorCode; // Code for error message shown on PA's display
 
@@ -158,21 +160,30 @@ namespace ACOM_Controller
                     MaxForwardPower = 600.0;
                     NominalReversePower = 99.0;
                     MaxReversePower = 130.0;
-                    TemperatureOffset = 281;
+                    TemperatureOffset = 282;
+                    ShowTemperature = false;
+                    WarningTemperature = 65;
                     break;
+                case "600S":
+                    NominalForwardPower = 600.0;
+                    MaxForwardPower = 700.0;
+                    NominalReversePower = 114.0;
+                    MaxReversePower = 150.0;
+                    TemperatureOffset = 273;
+                    ShowTemperature = true;
+                    WarningTemperature = 65;
+                    break;
+                default:
                 case "700S":
+                    // Default to ACOM 700S if config file is invalid or missing
+                    ampModel = "700S";
                     NominalForwardPower = 700.0;
                     MaxForwardPower = 800.0;
                     NominalReversePower = 129.0;
                     MaxReversePower = 170.0;
-                    TemperatureOffset = 281;
-                    break;
-                case "1000S":
-                    NominalForwardPower = 1000.0;
-                    MaxForwardPower = 1200.0;
-                    NominalReversePower = 190.0;
-                    MaxReversePower = 250.0;
-                    TemperatureOffset = 281;
+                    TemperatureOffset = 282;
+                    ShowTemperature = true;
+                    WarningTemperature = 65;
                     break;
                 case "1200S":
                     NominalForwardPower = 1200.0;
@@ -180,22 +191,17 @@ namespace ACOM_Controller
                     NominalReversePower = 228.0;
                     MaxReversePower = 300.0;
                     TemperatureOffset = 281;
+                    ShowTemperature = true;
+                    WarningTemperature = 65;
                     break;
                 case "2020S":
                     NominalForwardPower = 1500.0;
                     MaxForwardPower = 2000.0;
                     NominalReversePower = 228.0;
                     MaxReversePower = 300.0;
-                    TemperatureOffset = 273;
-                    break;
-                default:
-                    // Default to ACOM 600S, also if config file is invalid
-                    ampModel = "600S";
-                    NominalForwardPower = 600.0;
-                    MaxForwardPower = 700.0;
-                    NominalReversePower = 114.0;
-                    MaxReversePower = 150.0;
-                    TemperatureOffset = 273;
+                    TemperatureOffset = 282;
+                    ShowTemperature = false;
+                    WarningTemperature = 65;
                     break;
             }
 
@@ -334,34 +340,31 @@ namespace ACOM_Controller
 
                                     if (PAstatus != 10) // PAstatus 10 means in powering down mode
                                     {
-                                        tempLabel.Content = PAtemp.ToString() + "C";
                                         tempBar.Value = PAtemp;
+                                        tempLabel.Content = ShowTemperature ? PAtemp.ToString() + "C" : "";
+
+                                        tempBar.Foreground = PAtemp > WarningTemperature ? Brushes.Red : Brushes.Green;
 
                                         // Change color on temp bar and label at higher fan speeds
                                         switch (PAfan)
                                         {
                                             case 1:
-                                                tempBar.Foreground = Brushes.Green;
                                                 fanLabel.Content = "Fan";
                                                 fanLabel.Foreground = Brushes.Gray;
                                                 break;
                                             case 2:
-                                                tempBar.Foreground = Brushes.Green;
                                                 fanLabel.Content = "Fan 2";
                                                 fanLabel.Foreground = Brushes.Gray;
                                                 break;
                                             case 3:
-                                                tempBar.Foreground = Brushes.Green;
                                                 fanLabel.Content = "Fan 3";
                                                 fanLabel.Foreground = Brushes.Black;
                                                 break;
                                             case 4:
-                                                tempBar.Foreground = Brushes.Lime;
                                                 fanLabel.Content = "FAN 4";
                                                 fanLabel.Foreground = Brushes.Black;
                                                 break;
                                             default:
-                                                tempBar.Foreground = Brushes.Green; // no Fan
                                                 fanLabel.Content = "";
                                                 break;
                                         }
