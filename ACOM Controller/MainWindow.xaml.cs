@@ -158,28 +158,28 @@ namespace ACOM_Controller
                     MaxForwardPower = 600.0;
                     NominalReversePower = 99.0;
                     MaxReversePower = 130.0;
-                    TemperatureOffset = 283;
+                    TemperatureOffset = 281;
                     break;
                 case "700S":
                     NominalForwardPower = 700.0;
                     MaxForwardPower = 800.0;
                     NominalReversePower = 129.0;
                     MaxReversePower = 170.0;
-                    TemperatureOffset = 283;
+                    TemperatureOffset = 281;
                     break;
                 case "1000S":
                     NominalForwardPower = 1000.0;
                     MaxForwardPower = 1200.0;
                     NominalReversePower = 190.0;
                     MaxReversePower = 250.0;
-                    TemperatureOffset = 283;
+                    TemperatureOffset = 281;
                     break;
                 case "1200S":
                     NominalForwardPower = 1200.0;
                     MaxForwardPower = 1400.0;
                     NominalReversePower = 228.0;
                     MaxReversePower = 300.0;
-                    TemperatureOffset = 283;
+                    TemperatureOffset = 281;
                     break;
                 case "2020S":
                     NominalForwardPower = 1500.0;
