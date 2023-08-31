@@ -350,8 +350,6 @@ namespace ACOM_Controller
                                     PAtemp = messageBytes[16] + messageBytes[17] * 256 - TemperatureOffset; // extract data from message
                                     PAfan = (messageBytes[69] & 0xf0) >> 4;
 
-                                    //PAtemp = 66; // For debug
-
                                     if (PAstatus != 10) // PAstatus 10 means in powering down mode
                                     {
                                         tempBar.Value = PAtemp;
