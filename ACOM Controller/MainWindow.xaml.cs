@@ -350,7 +350,7 @@ namespace ACOM_Controller
                                     PAtemp = messageBytes[16] + messageBytes[17] * 256 - TemperatureOffset; // extract data from message
                                     PAfan = (messageBytes[69] & 0xf0) >> 4;
 
-                                    PAtemp = 66;
+                                    //PAtemp = 66; // For debug
 
                                     if (PAstatus != 10) // PAstatus 10 means in powering down mode
                                     {
@@ -411,17 +411,13 @@ namespace ACOM_Controller
                                         ReflectedPower[ReflectedPowerPeakIndex++ % ReflectedPowerPeakMemory] = ReflectedPowerCurrent; // save current power in fifo
                                         ReflectedPowerDisplay = ReflectedPower.Max();
 
-                                        //ReflectedPowerDisplay = 150; // For debug
-
                                         reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
 
-                                        // Lower part of the reflected bar in gray
-                                        reflBar.Value = ReflectedPowerDisplay;
+                                        // Reflected power bars
                                         reflBar.Foreground = Brushes.Gray;
-
-                                        // Upper part of the reflected bar in red
-                                        reflBar_Red.Value = ReflectedPowerDisplay;
                                         reflBar_Red.Foreground = Brushes.Red;
+                                        reflBar.Value = ReflectedPowerDisplay;
+                                        reflBar_Red.Value = ReflectedPowerDisplay;
 
                                         // Filter and display SWR data 
                                         swrCurrent = (messageBytes[26] + messageBytes[27] * 256) / 100.0;
@@ -436,13 +432,11 @@ namespace ACOM_Controller
 
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
-                                        // Lower part of the bar in blue
-                                        pwrBar.Value = PApowerDisplayBar;
+                                        // Output power bars
                                         pwrBar.Foreground = Brushes.RoyalBlue;
-
-                                        // Upper part of the bar in red
-                                        pwrBar_Red.Value = PApowerDisplayBar;
                                         pwrBar_Red.Foreground = Brushes.Crimson;
+                                        pwrBar.Value = PApowerDisplayBar;
+                                        pwrBar_Red.Value = PApowerDisplayBar;
 
                                         // Calculate average of recent non-zero SWR reports
                                         double swrAverageSum = 0.0;
