@@ -66,6 +66,7 @@ namespace ACOM_Controller
         int TemperatureOffset; // For calculating real temperature
         bool ShowTemperature; // Whether PA shows temperature in digits
         int WarningTemperature; // Temperature at which bar turns red
+        Brush TempLabelColor;
 
         int errorCode; // Code for error message shown on PA's display
 
@@ -111,6 +112,8 @@ namespace ACOM_Controller
             dispatcherTimer.Tick += new EventHandler(OnTimer);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
             dispatcherTimer.Start();
+
+            TempLabelColor = tempLabel.Foreground;
         }
 
         // Clean up and housekeeping at program shutdown
@@ -219,10 +222,19 @@ namespace ACOM_Controller
             {
                 ProgramWindow.Title = programTitle;
                 ProgramWindow.Topmost = alwaysontop;
-                pwrBar.Maximum = NominalForwardPower;
-                pwrBar_Peak.Maximum = MaxForwardPower - NominalForwardPower;
-                reflBar.Maximum = NominalReversePower;
-                reflBar_Peak.Maximum = MaxReversePower - NominalReversePower;
+
+                pwrBar.Maximum = NominalForwardPower + 1;
+                pwrBar.Minimum = 0;
+                pwrBar_Red.Maximum = MaxForwardPower;
+                pwrBar_Red.Minimum = NominalForwardPower;
+
+                reflBar.Maximum = NominalReversePower - 1;
+                reflBar.Minimum = 0;
+                reflBar_Red.Maximum = MaxReversePower;
+                reflBar_Red.Minimum = NominalReversePower;
+
+                tempBar.Minimum = 0;
+                tempBar.Maximum = 100;
             }));
 
             // Send enable telemetry command to PA if port successfully opened
@@ -338,30 +350,48 @@ namespace ACOM_Controller
                                     PAtemp = messageBytes[16] + messageBytes[17] * 256 - TemperatureOffset; // extract data from message
                                     PAfan = (messageBytes[69] & 0xf0) >> 4;
 
+                                    PAtemp = 66;
+
                                     if (PAstatus != 10) // PAstatus 10 means in powering down mode
                                     {
                                         tempBar.Value = PAtemp;
                                         tempLabel.Content = ShowTemperature ? PAtemp.ToString() + "C" : "";
 
-                                        tempBar.Foreground = PAtemp > WarningTemperature ? Brushes.Red : Brushes.Green;
+                                        tempBar.Foreground = Brushes.Green;
 
-                                        // Change color on temp bar and label at higher fan speeds
+                                        if (PAtemp < WarningTemperature)
+                                        {
+                                            tempBar.Foreground = Brushes.Green;
+                                            tempLabel.Foreground = TempLabelColor;
+                                            tempLabel.FontWeight = FontWeights.Normal;
+                                        }
+                                        else
+                                        {
+                                            tempBar.Foreground = Brushes.Red;
+                                            tempLabel.Foreground = Brushes.Crimson;
+                                            tempLabel.FontWeight = FontWeights.Bold;
+                                        }
+
                                         switch (PAfan)
                                         {
                                             case 1:
                                                 fanLabel.Content = "Fan";
+                                                fanLabel.FontWeight = FontWeights.Normal;
                                                 fanLabel.Foreground = Brushes.Gray;
                                                 break;
                                             case 2:
                                                 fanLabel.Content = "Fan 2";
+                                                fanLabel.FontWeight = FontWeights.Bold;
                                                 fanLabel.Foreground = Brushes.Gray;
                                                 break;
                                             case 3:
                                                 fanLabel.Content = "Fan 3";
+                                                fanLabel.FontWeight = FontWeights.Bold;
                                                 fanLabel.Foreground = Brushes.Black;
                                                 break;
                                             case 4:
                                                 fanLabel.Content = "FAN 4";
+                                                fanLabel.FontWeight = FontWeights.Bold;
                                                 fanLabel.Foreground = Brushes.Black;
                                                 break;
                                             default:
@@ -381,15 +411,17 @@ namespace ACOM_Controller
                                         ReflectedPower[ReflectedPowerPeakIndex++ % ReflectedPowerPeakMemory] = ReflectedPowerCurrent; // save current power in fifo
                                         ReflectedPowerDisplay = ReflectedPower.Max();
 
+                                        //ReflectedPowerDisplay = 150; // For debug
+
                                         reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
 
                                         // Lower part of the reflected bar in gray
-                                        reflBar.Value = (ReflectedPowerDisplay > NominalReversePower) ? NominalReversePower : ReflectedPowerDisplay;
+                                        reflBar.Value = ReflectedPowerDisplay;
                                         reflBar.Foreground = Brushes.Gray;
 
                                         // Upper part of the reflected bar in red
-                                        reflBar_Peak.Value = (ReflectedPowerDisplay > NominalReversePower) ? PApowerDisplay - NominalReversePower : 0;
-                                        reflBar_Peak.Foreground = Brushes.Crimson;
+                                        reflBar_Red.Value = ReflectedPowerDisplay;
+                                        reflBar_Red.Foreground = Brushes.Red;
 
                                         // Filter and display SWR data 
                                         swrCurrent = (messageBytes[26] + messageBytes[27] * 256) / 100.0;
@@ -405,12 +437,12 @@ namespace ACOM_Controller
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
                                         // Lower part of the bar in blue
-                                        pwrBar.Value = (PApowerDisplayBar > NominalForwardPower) ? NominalForwardPower : PApowerDisplayBar;
+                                        pwrBar.Value = PApowerDisplayBar;
                                         pwrBar.Foreground = Brushes.RoyalBlue;
 
                                         // Upper part of the bar in red
-                                        pwrBar_Peak.Value = (PApowerDisplayBar > NominalForwardPower) ? PApowerDisplayBar - NominalForwardPower : 0.0;
-                                        pwrBar_Peak.Foreground = Brushes.Crimson;
+                                        pwrBar_Red.Value = PApowerDisplayBar;
+                                        pwrBar_Red.Foreground = Brushes.Crimson;
 
                                         // Calculate average of recent non-zero SWR reports
                                         double swrAverageSum = 0.0;
@@ -496,14 +528,14 @@ namespace ACOM_Controller
 
                                         reflLabel.Content = "--R";
                                         reflBar.Value = 0.0;
-                                        reflBar_Peak.Value = 0.0;
+                                        reflBar_Red.Value = 0.0;
 
                                         tempLabel.Content = "--C";
                                         tempBar.Value = 0.0;
 
                                         pwrLabel.Content = "--W";
                                         pwrBar.Value = 0.0;
-                                        pwrBar_Peak.Value = 0.0;
+                                        pwrBar_Red.Value = 0.0;
                                     }
                                 }));
                             }
@@ -563,14 +595,14 @@ namespace ACOM_Controller
 
                     reflLabel.Content = "--R";
                     reflBar.Value = 0.0;
-                    reflBar_Peak.Value = 0.0;
+                    reflBar_Red.Value = 0.0;
 
                     tempLabel.Content = "--C";
                     tempBar.Value = 0.0;
 
                     pwrLabel.Content = "--W";
                     pwrBar.Value = 0.0;
-                    pwrBar_Peak.Value = 0.0;
+                    pwrBar_Red.Value = 0.0;
 
                     statusLabel.Foreground = Brushes.Gray;
                     statusLabel.Content = "OFF";
