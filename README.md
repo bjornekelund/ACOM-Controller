@@ -4,9 +4,9 @@ Minimalistic Windows application for controlling and monitoring *ACOM 500S*, *AC
 *ACOM 700S*, *ACOM 1200S*, and *ACOM 2020S* shortwave radio power amplifiers from the 
 desktop via its RS-232 remote control interface. 
 
-Important: ACOM 700S with firmware 1.6 will not respond correctly to the front power 
-button when this app is running. If you do not want to use the app for powering down 
-the PA, stop the app, then power down.
+Important: ACOM 700S with firmware 1.6 and a fully equipped RS-232 cable will not 
+respond correctly to the front power button when this app is running. If you do 
+not want to use the app for powering down the PA, stop the app, then power down.
 
 With the help of an ethernet serial port client and server or a serial port tunneling 
 application like `com2tcp` it can also be used for geographically remote operation. 
