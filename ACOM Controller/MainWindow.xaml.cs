@@ -146,6 +146,9 @@ namespace ACOM_Controller
             // Default to COM4 if config file is invalid
             Port = new SerialPort(comPort == "" ? "COM1" : comPort, 9600, Parity.None, 8, StopBits.One);
 
+            Port.DtrEnable = false;
+            Port.RtsEnable = false;
+
             try
             {
                 Port.Open();
