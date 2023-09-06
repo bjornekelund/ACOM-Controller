@@ -403,14 +403,16 @@ namespace ACOM_Controller
 
                                         // Filter and display drive power data 
                                         DrivePowerCurrent = messageBytes[20] + messageBytes[21] * 256.0;
-                                        DrivePower[DrivePowerPeakIndex++ % DrivePowerPeakMemory] = DrivePowerCurrent; // save current power in fifo
+                                        DrivePower[DrivePowerPeakIndex] = DrivePowerCurrent; // save current power in fifo
+                                        DrivePowerPeakIndex = (DrivePowerPeakIndex + 1) % DrivePowerPeakMemory;
                                         DrivePowerDisplay = DrivePower.Max() / 10.0;
 
                                         driveLabel.Content = DrivePowerDisplay.ToString("0") + "W";
 
                                         // Filter reflected power data 
                                         ReflectedPowerCurrent = messageBytes[24] + messageBytes[25] * 256.0;
-                                        ReflectedPower[ReflectedPowerPeakIndex++ % ReflectedPowerPeakMemory] = ReflectedPowerCurrent; // save current power in fifo
+                                        ReflectedPower[ReflectedPowerPeakIndex] = ReflectedPowerCurrent; // save current power in fifo
+                                        ReflectedPowerPeakIndex = (ReflectedPowerPeakIndex + 1) % ReflectedPowerPeakMemory;
                                         ReflectedPowerDisplay = ReflectedPower.Max();
 
                                         reflLabel.Content = ReflectedPowerDisplay.ToString("0") + "R";
@@ -423,11 +425,13 @@ namespace ACOM_Controller
 
                                         // Filter and display SWR data 
                                         swrCurrent = (messageBytes[26] + messageBytes[27] * 256) / 100.0;
-                                        swrValue[swrPeakIndex++ % swrPeakMemory] = swrCurrent; // save current power in fifo
+                                        swrValue[swrPeakIndex] = swrCurrent; // save current power in fifo
+                                        swrPeakIndex = (swrPeakIndex + 1) % swrPeakMemory;
 
                                         // Filter output power data 
                                         PApowerCurrent = messageBytes[22] + messageBytes[23] * 256;
-                                        PApower[PApowerPeakIndex++ % PApowerPeakMemory] = PApowerCurrent; // save current power in fifo
+                                        PApower[PApowerPeakIndex] = PApowerCurrent; // save current power in fifo
+                                        PApowerPeakIndex = (PApowerPeakIndex + 1) % PApowerPeakMemory;
 
                                         PApowerDisplay = PApower.Max();
                                         PApowerDisplayBar = PApowerDisplay * 1.02; // Add 2% to align graphics better with PA's own display
