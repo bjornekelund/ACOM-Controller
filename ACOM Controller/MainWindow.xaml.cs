@@ -146,7 +146,8 @@ namespace ACOM_Controller
             // Default to COM1 if config file is invalid
             Port = new SerialPort(comPort == "" ? "COM1" : comPort, 9600, Parity.None, 8, StopBits.One)
             {
-                DtrEnable = false,  // Disable DTR and RTS handshake to avoid blocking front panel power button
+                Handshake = Handshake.None, // Disable handshake
+                DtrEnable = false,          // Make sure DTR and RTS are low to avoid blocking front panel power button
                 RtsEnable = false
             };
 
