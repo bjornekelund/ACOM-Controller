@@ -203,7 +203,7 @@ namespace ACOM_Controller
                     WarningTemperature = 65;
                     break;
                 case "2020S":
-                    NominalForwardPower = 1500.0;
+                    NominalForwardPower = 1800.0;
                     MaxForwardPower = 2000.0;
                     NominalReversePower = 228.0;
                     MaxReversePower = 300.0;
@@ -435,6 +435,7 @@ namespace ACOM_Controller
                                         PApowerPeakIndex = (PApowerPeakIndex + 1) % PApowerPeakMemory;
 
                                         PApowerDisplay = PApower.Max();
+
                                         PApowerDisplayBar = PApowerDisplay * 1.02; // Add 2% to align graphics better with PA's own display
 
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";

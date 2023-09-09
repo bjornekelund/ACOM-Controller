@@ -19,14 +19,14 @@
         </GroupBox>
         <ProgressBar x:Name="tempBar" HorizontalAlignment="Left" Height="20" Margin="294,66,0,0" VerticalAlignment="Top" Width="160" Foreground="{x:Null}" BorderBrush="#FFE6E6E6"/>
         <ProgressBar x:Name="pwrBar" HorizontalAlignment="Left" Height="26" Margin="294,7,0,0" VerticalAlignment="Top" Width="138" Maximum="600" UseLayoutRounding="False" Foreground="{x:Null}" BorderBrush="#FFE6E6E6"/>
-        <Label x:Name="tempLabel" Content="--C" HorizontalAlignment="Left" Margin="454,63,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="#FF5A5A5A"/>
-        <Label x:Name="pwrLabel" Content="--W" HorizontalAlignment="Left" Margin="454,7,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="#FF5A5A5A"/>
+        <Label x:Name="tempLabel" Content="--C" HorizontalAlignment="Left" Margin="454,63,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="46" Foreground="#FF5A5A5A"/>
+        <Label x:Name="pwrLabel" Content="--W" HorizontalAlignment="Left" Margin="454,7,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="46" Foreground="#FF5A5A5A"/>
         <GroupBox Header="Drive" HorizontalAlignment="Left" Height="42" Margin="208,46,0,0" VerticalAlignment="Top" Width="72">
             <Label x:Name="driveLabel" Content="--W" HorizontalAlignment="Center" Height="28" Margin="0,-6,1,-2" VerticalAlignment="Center" Width="59" Foreground="#FF5A5A5A" HorizontalContentAlignment="Center" FontSize="14"/>
         </GroupBox>
         <ProgressBar x:Name="pwrBar_Red" HorizontalAlignment="Left" Height="26" Margin="431,7,0,0" VerticalAlignment="Top" Width="23" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderBrush="#FFE6E6E6"/>
         <ProgressBar x:Name="reflBar" HorizontalAlignment="Left" Height="20" Margin="294,39,0,0" VerticalAlignment="Top" Width="122" Foreground="{x:Null}" BorderBrush="#FFE6E6E6"/>
-        <Label x:Name="reflLabel" Content="---R" HorizontalAlignment="Left" Margin="454,36,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="42" Foreground="#FF5A5A5A"/>
+        <Label x:Name="reflLabel" Content="---R" HorizontalAlignment="Left" Margin="454,36,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="46" Foreground="#FF5A5A5A"/>
         <ProgressBar x:Name="reflBar_Red" HorizontalAlignment="Left" Height="20" Margin="415,39,0,0" VerticalAlignment="Top" Width="39" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderBrush="#FFE6E6E6"/>
         <Label x:Name="swrLabel" Content="" HorizontalAlignment="Left" Height="19" Margin="395,39,0,0" VerticalAlignment="Top" Width="55" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
         <Button x:Name="errorTextButton" Content="Drive power at wrong time" HorizontalAlignment="Left" Margin="272,27,0,0" VerticalAlignment="Top" Width="206" ClickMode="Press" Click="OperateClick" Height="40" BorderBrush="Black" Foreground="#FF303030" Background="Yellow" BorderThickness="2" FontWeight="Bold" FontSize="14" Visibility="Visible"/>
