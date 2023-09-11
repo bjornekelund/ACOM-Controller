@@ -29,8 +29,9 @@
         <Label x:Name="reflLabel" Content="---R" HorizontalAlignment="Left" Margin="454,36,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="46" Foreground="#FF5A5A5A"/>
         <ProgressBar x:Name="reflBar_Red" HorizontalAlignment="Left" Height="20" Margin="415,39,0,0" VerticalAlignment="Top" Width="39" UseLayoutRounding="False" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderBrush="#FFE6E6E6"/>
         <Label x:Name="swrLabel" Content="" HorizontalAlignment="Left" Height="19" Margin="395,39,0,0" VerticalAlignment="Top" Width="55" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
-        <Button x:Name="errorTextButton" Content="Drive power at wrong time" HorizontalAlignment="Left" Margin="272,27,0,0" VerticalAlignment="Top" Width="206" ClickMode="Press" Click="OperateClick" Height="40" BorderBrush="Black" Foreground="#FF303030" Background="Yellow" BorderThickness="2" FontWeight="Bold" FontSize="14" Visibility="Visible"/>
+        <Button x:Name="errorTextButton" Content="Drive power at wrong time" HorizontalAlignment="Left" Margin="263,27,0,0" VerticalAlignment="Top" Width="206" ClickMode="Press" Click="OperateClick" Height="40" BorderBrush="Black" Foreground="#FF303030" Background="Yellow" BorderThickness="2" FontWeight="Bold" FontSize="14" Visibility="Visible"/>
         <Label x:Name="fanLabel" Content="" HorizontalAlignment="Left" Height="19" Margin="395,67,0,0" VerticalAlignment="Top" Width="55" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontWeight="Bold"/>
+        <Label x:Name="effLabel" Content="" HorizontalAlignment="Left" Height="19" Margin="294,67,0,0" VerticalAlignment="Top" Width="28" FontSize="11" Padding="1" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Foreground="#FFF3F3F3"/>
 
     </Grid>
 </Window>

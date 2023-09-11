@@ -37,26 +37,30 @@ namespace ACOM_Controller
         int PApowerPeakIndex = 0;
         double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power 
         double PApowerCurrent; // Current PA power
-        double PApowerDisplay = 0; // Filtered PA output power
-        double PApowerDisplayBar = 0; // Filtered PA output power, increased by 2% for graphics
+        double PApowerDisplay = 0.0; // Filtered PA output power
+        double PApowerDisplayBar = 0.0; // Filtered PA output power, increased by 2% for graphics
+
+        double[] DCpower = new double[PApowerPeakMemory];
+        double DCpowerCurrent;
+        double effDisplay = 0.0;
 
         const int DrivePowerPeakMemory = 10;
         int DrivePowerPeakIndex = 0;
         double[] DrivePower = new double[DrivePowerPeakMemory]; // Array for filtering drive power 
-        double DrivePowerCurrent; // Current PA power
-        double DrivePowerDisplay = 0; // Filtered PA output power
+        double DrivePowerCurrent = 0.0; // Current PA power
+        double DrivePowerDisplay = 0.0; // Filtered PA output power
 
         const int ReflectedPowerPeakMemory = 10;
         int ReflectedPowerPeakIndex = 0;
         double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering reflected power 
-        double ReflectedPowerCurrent; // Current reflected power
-        double ReflectedPowerDisplay = 0; // Filtered reflected power
+        double ReflectedPowerCurrent = 0.0; // Current reflected power
+        double ReflectedPowerDisplay = 0.0; // Filtered reflected power
 
         const int swrPeakMemory = 10;
         int swrPeakIndex = 0;
         double[] swrValue = new double[swrPeakMemory]; // Array for filtering SWR reports
-        double swrCurrent; // Current SWR
-        double swrDisplay = 0; // Filtered SWR 
+        double swrCurrent = 0.0; // Current SWR
+        double swrDisplay = 0.0; // Filtered SWR 
 
         double NominalForwardPower; // For scaling display
         double MaxForwardPower;
@@ -426,25 +430,38 @@ namespace ACOM_Controller
 
                                         // Filter and display SWR data 
                                         swrCurrent = (messageBytes[26] + messageBytes[27] * 256) / 100.0;
-                                        swrValue[swrPeakIndex] = swrCurrent; // save current power in fifo
+                                        swrValue[swrPeakIndex] = swrCurrent;
                                         swrPeakIndex = (swrPeakIndex + 1) % swrPeakMemory;
 
                                         // Filter output power data 
                                         PApowerCurrent = messageBytes[22] + messageBytes[23] * 256;
-                                        PApower[PApowerPeakIndex] = PApowerCurrent; // save current power in fifo
-                                        PApowerPeakIndex = (PApowerPeakIndex + 1) % PApowerPeakMemory;
-
+                                        PApower[PApowerPeakIndex] = PApowerCurrent;
                                         PApowerDisplay = PApower.Max();
-
                                         PApowerDisplayBar = PApowerDisplay * 1.02; // Add 2% to align graphics better with PA's own display
-
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
+
+                                        // Filter DC power data
+                                        DCpowerCurrent = messageBytes[8] * 0.1 + messageBytes[9] * 25.6;
+                                        DCpower[PApowerPeakIndex] = DCpowerCurrent;
+
+                                        PApowerPeakIndex = (PApowerPeakIndex + 1) % PApowerPeakMemory;
 
                                         // Output power bars
                                         pwrBar.Foreground = Brushes.RoyalBlue;
                                         pwrBar_Red.Foreground = Brushes.Crimson;
                                         pwrBar.Value = PApowerDisplayBar;
                                         pwrBar_Red.Value = PApowerDisplayBar;
+
+                                        effDisplay = 100.0 * PApowerDisplay / DCpower.Max();
+
+                                        if (effDisplay > 30.0 && effDisplay < 80.0 && PApowerDisplay > 50.0)
+                                        {
+                                            effLabel.Content = effDisplay.ToString("0") + "%";
+                                        }
+                                        else
+                                        {
+                                            effLabel.Content = "";
+                                        }
 
                                         // Calculate average of recent non-zero SWR reports
                                         double swrAverageSum = 0.0;
