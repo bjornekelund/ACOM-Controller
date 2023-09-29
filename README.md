@@ -10,7 +10,7 @@ application like `com2tcp` it can also be used for geographically remote operati
 Right-click the *Standby* button to access the configuration panel.
 Default configuration is for ACOM 700S with communication on COM1. 
 
-Can optionally always stay on top of other apps to e.g. allow use with a full 
+By default it stays on top of other apps to e.g. allow use with a full 
 screen logger on a single screen.
 
 The "Do nothing if already running" option silently stops the program at 

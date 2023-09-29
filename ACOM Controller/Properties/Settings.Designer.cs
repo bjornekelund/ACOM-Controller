@@ -94,5 +94,29 @@ namespace ACOM_Controller.Properties {
                 this["NoPopup"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowEfficiency {
+            get {
+                return ((bool)(this["ShowEfficiency"]));
+            }
+            set {
+                this["ShowEfficiency"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowGain {
+            get {
+                return ((bool)(this["ShowGain"]));
+            }
+            set {
+                this["ShowGain"] = value;
+            }
+        }
     }
 }

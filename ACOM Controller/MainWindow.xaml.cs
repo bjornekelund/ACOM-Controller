@@ -56,9 +56,9 @@ namespace ACOM_Controller
         double ReflectedPowerCurrent = 0.0; // Current reflected power
         double ReflectedPowerDisplay = 0.0; // Filtered reflected power
 
-        const int swrPeakMemory = 10;
-        int swrPeakIndex = 0;
-        double[] swrValue = new double[swrPeakMemory]; // Array for filtering SWR reports
+        const int swrMemory = 10;
+        int swrIndex = 0;
+        double[] swrValue = new double[swrMemory]; // Array for filtering SWR reports
         double swrCurrent = 0.0; // Current SWR
         double swrDisplay = 0.0; // Filtered SWR 
 
@@ -100,7 +100,7 @@ namespace ACOM_Controller
             // Hide error pop up
             errorTextButton.Visibility = Visibility.Hidden;
 
-            Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel, Settings.Default.AlwaysOnTop, Settings.Default.NoPopup);
+            Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel, Settings.Default.AlwaysOnTop, Settings.Default.NoPopup, Settings.Default.ShowEfficiency, Settings.Default.ShowGain);
 
             // Fetch window location from saved settings
             Top = Settings.Default.Top;
@@ -135,7 +135,7 @@ namespace ACOM_Controller
             }
         }
 
-        public void Configuration(string comPort, string ampModel, bool alwaysontop, bool nopopup)
+        public void Configuration(string comPort, string ampModel, bool alwaysontop, bool nopopup, bool showEfficiency, bool showGain)
         {
             try
             {
@@ -221,7 +221,11 @@ namespace ACOM_Controller
             Settings.Default.ComPort = comPort;
             Settings.Default.AlwaysOnTop = alwaysontop;
             Settings.Default.NoPopup = nopopup;
+            Settings.Default.ShowEfficiency = showEfficiency;
+            Settings.Default.ShowGain = showGain;
             Settings.Default.Save();
+
+            effLabel.Visibility = showEfficiency ? Visibility.Visible : Visibility.Hidden;
 
             programTitle = "ACOM " + ampModel + " Controller" + Release + "("
                 + comPort + (portIsOpen ? ")" : " - failed to open)");
@@ -430,8 +434,8 @@ namespace ACOM_Controller
 
                                         // Filter and display SWR data 
                                         swrCurrent = (messageBytes[26] + messageBytes[27] * 256) / 100.0;
-                                        swrValue[swrPeakIndex] = swrCurrent;
-                                        swrPeakIndex = (swrPeakIndex + 1) % swrPeakMemory;
+                                        swrValue[swrIndex] = swrCurrent;
+                                        swrIndex = (swrIndex + 1) % swrMemory;
 
                                         // Filter output power data 
                                         PApowerCurrent = messageBytes[22] + messageBytes[23] * 256;
@@ -460,13 +464,22 @@ namespace ACOM_Controller
                                         }
                                         else
                                         {
-                                            effLabel.Content = "";
+                                            effLabel.Content = string.Empty;
+                                        }
+
+                                        if (PApowerDisplay > 100.0)
+                                        {
+                                            gainLabel.Content = (10.0 * Math.Log10(PApowerDisplay / DrivePowerDisplay)).ToString("0") + "dB";
+                                        }
+                                        else
+                                        {
+                                            gainLabel.Content = string.Empty;
                                         }
 
                                         // Calculate average of recent non-zero SWR reports
                                         double swrAverageSum = 0.0;
                                         int swrNonZeroCount = 0;
-                                        for (int i = 0; i < swrPeakMemory; i++)
+                                        for (int i = 0; i < swrMemory; i++)
                                         {
                                             if (swrValue[i] > 0)
                                             {
@@ -643,7 +656,8 @@ namespace ACOM_Controller
 
         private void StandbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort, Settings.Default.AlwaysOnTop, Settings.Default.NoPopup);
+            Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort, Settings.Default.AlwaysOnTop, 
+                Settings.Default.NoPopup, Settings.Default.ShowEfficiency, Settings.Default.ShowGain);
             configPanel.ShowDialog();
         }
     }

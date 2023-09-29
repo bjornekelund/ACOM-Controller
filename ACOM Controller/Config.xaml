@@ -5,19 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ACOM_Controller"
         mc:Ignorable="d"
-        Title="Config" Height="146.188" Width="291.864" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="Manual" WindowStyle="None" Topmost="True">
+        Title="Config" Height="178.167" Width="291.864" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="Manual" WindowStyle="None" Topmost="True">
     <Grid x:Name="Panel" Margin="10">
-        <GroupBox x:Name="GroupBox" Header="Configuration" HorizontalAlignment="Left" Height="106" Margin="-4,-9,0,0" VerticalAlignment="Top" Width="277">
-            <CheckBox x:Name="onTopCheckBox" Content="On top" HorizontalAlignment="Left" Height="18" Margin="5,97,0,-32" VerticalAlignment="Top"/>
+        <GroupBox x:Name="GroupBox" Header="Configuration" HorizontalAlignment="Left" Height="167" Margin="-4,-9,-1,0" VerticalAlignment="Top" Width="277">
+            <CheckBox x:Name="onTopCheckBox" Content="On top" HorizontalAlignment="Left" Height="18" Margin="5,89,0,0" VerticalAlignment="Top"/>
         </GroupBox>
 
         <ComboBox x:Name="modelComboBox" HorizontalAlignment="Left" Margin="7,36,0,0" VerticalAlignment="Top" Width="120"/>
         <ComboBox x:Name="portComboBox" HorizontalAlignment="Left" Margin="144,36,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="1.747,-1.152"/>
         <Label Content="PA model" HorizontalAlignment="Left" VerticalAlignment="Top" Width="68" Margin="4,10,0,0"/>
         <Label Content="COM port" HorizontalAlignment="Left" Margin="138,10,0,0" VerticalAlignment="Top" Width="79"/>
-        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="101,68,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
-        <Button x:Name="okButton" Content="OK" HorizontalAlignment="Left" Margin="189,68,0,0" VerticalAlignment="Top" Width="75" Click="OkButton_Click"/>
-        <CheckBox x:Name="silentCheckBox" Content="Do nothing if already running" HorizontalAlignment="Left" Height="18" Margin="86,105,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="101,128,0,0" VerticalAlignment="Top" Width="75" Click="CancelButton_Click"/>
+        <Button x:Name="okButton" Content="OK" HorizontalAlignment="Left" Margin="189,128,0,0" VerticalAlignment="Top" Width="75" Click="OkButton_Click"/>
+        <CheckBox x:Name="silentCheckBox" Content="Do nothing if already running" HorizontalAlignment="Left" Height="18" Margin="86,97,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="showEfficiencyCheckBox" Content="Show efficiency" HorizontalAlignment="Left" Height="18" Margin="7,68,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="showGainCheckBox" Content="Show gain" HorizontalAlignment="Left" Height="18" Margin="138,68,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

@@ -32,6 +32,7 @@
         <Button x:Name="errorTextButton" Content="Drive power at wrong time" HorizontalAlignment="Left" Margin="263,27,0,0" VerticalAlignment="Top" Width="206" ClickMode="Press" Click="OperateClick" Height="40" BorderBrush="Black" Foreground="#FF303030" Background="Yellow" BorderThickness="2" FontWeight="Bold" FontSize="14" Visibility="Visible"/>
         <Label x:Name="fanLabel" Content="" HorizontalAlignment="Left" Height="19" Margin="395,67,0,0" VerticalAlignment="Top" Width="55" FontSize="11" Padding="1" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontWeight="Bold"/>
         <Label x:Name="effLabel" Content="" HorizontalAlignment="Left" Height="19" Margin="294,67,0,0" VerticalAlignment="Top" Width="28" FontSize="11" Padding="1" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Foreground="#FFF3F3F3"/>
+        <Label x:Name="gainLabel" Content="" HorizontalAlignment="Left" Height="25" Margin="294,8,0,0" VerticalAlignment="Top" Width="28" FontSize="11" Padding="1" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Foreground="#FFF3F3F3"/>
 
     </Grid>
 </Window>
