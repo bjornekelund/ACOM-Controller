@@ -499,7 +499,7 @@ namespace ACOM_Controller
                                         }
                                         else
                                         {
-                                            swrLabel.Content = "";
+                                            swrLabel.Content = string.Empty;
                                         }
 
                                         // Show active LPF as text
