@@ -100,7 +100,8 @@ namespace ACOM_Controller
             // Hide error pop up
             errorTextButton.Visibility = Visibility.Hidden;
 
-            Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel, Settings.Default.AlwaysOnTop, Settings.Default.NoPopup, Settings.Default.ShowEfficiency, Settings.Default.ShowGain);
+            Configuration(Settings.Default.ComPort, Settings.Default.AmplifierModel, Settings.Default.AlwaysOnTop, 
+                Settings.Default.NoPopup, Settings.Default.ShowEfficiency, Settings.Default.ShowGain, Settings.Default.ShowSWR);
 
             // Fetch window location from saved settings
             Top = Settings.Default.Top;
@@ -135,7 +136,7 @@ namespace ACOM_Controller
             }
         }
 
-        public void Configuration(string comPort, string ampModel, bool alwaysontop, bool nopopup, bool showEfficiency, bool showGain)
+        public void Configuration(string comPort, string ampModel, bool alwaysontop, bool nopopup, bool showEfficiency, bool showGain, bool showSWR)
         {
             try
             {
@@ -223,9 +224,12 @@ namespace ACOM_Controller
             Settings.Default.NoPopup = nopopup;
             Settings.Default.ShowEfficiency = showEfficiency;
             Settings.Default.ShowGain = showGain;
+            Settings.Default.ShowSWR = showSWR;
             Settings.Default.Save();
 
             effLabel.Visibility = showEfficiency ? Visibility.Visible : Visibility.Hidden;
+            swrLabel.Visibility = showSWR ? Visibility.Visible : Visibility.Hidden;
+            gainLabel.Visibility = showGain ? Visibility.Visible : Visibility.Hidden;
 
             programTitle = "ACOM " + ampModel + " Controller" + Release + "("
                 + comPort + (portIsOpen ? ")" : " - failed to open)");
@@ -657,7 +661,7 @@ namespace ACOM_Controller
         private void StandbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort, Settings.Default.AlwaysOnTop, 
-                Settings.Default.NoPopup, Settings.Default.ShowEfficiency, Settings.Default.ShowGain);
+                Settings.Default.NoPopup, Settings.Default.ShowEfficiency, Settings.Default.ShowGain, Settings.Default.ShowSWR);
             configPanel.ShowDialog();
         }
     }

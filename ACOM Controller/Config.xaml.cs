@@ -6,7 +6,7 @@ namespace ACOM_Controller
     {
         MainWindow mainwindow;
 
-        public Config(MainWindow mw, string model, string port, bool ontop, bool nopopup, bool showEff, bool showGain)
+        public Config(MainWindow mw, string model, string port, bool ontop, bool nopopup, bool showEff, bool showGain, bool ShowSWR)
         {
             InitializeComponent();
 
@@ -32,6 +32,7 @@ namespace ACOM_Controller
             silentCheckBox.IsChecked = nopopup;
             showEfficiencyCheckBox.IsChecked = showEff;
             showGainCheckBox.IsChecked = showGain;
+            showSwrCheckBox.IsChecked = ShowSWR;
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -41,7 +42,8 @@ namespace ACOM_Controller
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            mainwindow.Configuration(portComboBox.Text, modelComboBox.Text, (bool)onTopCheckBox.IsChecked, (bool)silentCheckBox.IsChecked, (bool)showEfficiencyCheckBox.IsChecked, (bool)showGainCheckBox.IsChecked);
+            mainwindow.Configuration(portComboBox.Text, modelComboBox.Text, (bool)onTopCheckBox.IsChecked, (bool)silentCheckBox.IsChecked, 
+                (bool)showEfficiencyCheckBox.IsChecked, (bool)showGainCheckBox.IsChecked, (bool)showSwrCheckBox.IsChecked);
             Close();
         }
     }
