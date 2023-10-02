@@ -16,4 +16,6 @@ screen logger on a single screen.
 The "Do nothing if already running" option silently stops the program at 
 start up if another copy is already running.
 
+The app can, optionally, also display power efficiency, gain, and SWR.
+
 For more information, visit www.sm7iun.se
