@@ -471,7 +471,7 @@ namespace ACOM_Controller
                                             effLabel.Content = string.Empty;
                                         }
 
-                                        if (PApowerDisplay > 100.0)
+                                        if (DrivePowerDisplay > 1.0 && PApowerDisplay > 100.0)
                                         {
                                             gainLabel.Content = (10.0 * Math.Log10(PApowerDisplay / DrivePowerDisplay)).ToString("0") + "dB";
                                         }
