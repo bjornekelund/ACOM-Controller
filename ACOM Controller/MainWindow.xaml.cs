@@ -445,7 +445,7 @@ namespace ACOM_Controller
                                         PApowerCurrent = messageBytes[22] + messageBytes[23] * 256;
                                         PApower[PApowerPeakIndex] = PApowerCurrent;
                                         PApowerDisplay = PApower.Max();
-                                        PApowerDisplayBar = PApowerDisplay * 1.02; // Add 2% to align graphics better with PA's own display
+                                        PApowerDisplayBar = PApowerDisplay;
                                         pwrLabel.Content = PApowerDisplay.ToString("0") + "W";
 
                                         // Filter DC power data
