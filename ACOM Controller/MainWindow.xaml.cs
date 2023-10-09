@@ -462,7 +462,7 @@ namespace ACOM_Controller
 
                                         effDisplay = 100.0 * PApowerDisplay / DCpower.Max();
 
-                                        if (effDisplay > 30.0 && effDisplay < 80.0 && PApowerDisplay > 50.0)
+                                        if (effDisplay > 20.0 && effDisplay < 80.0 && PApowerDisplay > 50.0)
                                         {
                                             effLabel.Content = effDisplay.ToString("0") + "%";
                                         }
