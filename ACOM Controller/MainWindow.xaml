@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ACOM_Controller"
         mc:Ignorable="d"
-        Title="ACOM Controller" Height="132" Width="519" ResizeMode="CanMinimize" ScrollViewer.VerticalScrollBarVisibility="Disabled" WindowStartupLocation="Manual" Closing="MainWindow_Closed" Closed="MainWindow_Closed" Topmost="True" HorizontalAlignment="Left" VerticalAlignment="Top">
+        Title="ACOM Controller" Height="135" Width="519" ResizeMode="CanMinimize" ScrollViewer.VerticalScrollBarVisibility="Disabled" WindowStartupLocation="Manual" Closing="MainWindow_Closed" Closed="MainWindow_Closed" Topmost="True" HorizontalAlignment="Left" VerticalAlignment="Top">
     <Grid Margin="0,0,0,-1">
 
         <Button x:Name="standbyButton" Content="Standby" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top" Width="84" Click="StandbyClick" ClickMode="Press" Background="#FF5AADFF" Height="28" FontSize="14" BorderBrush="#FF5AADFF" Foreground="#FF303030" MouseRightButtonDown="StandbyButton_MouseRightButtonDown" Focusable="False"/>
