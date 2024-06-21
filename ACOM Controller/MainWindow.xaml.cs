@@ -11,23 +11,23 @@ namespace ACOM_Controller
 {
     public partial class MainWindow : Window
     {
-        AssemblyName _assemblyName = Assembly.GetExecutingAssembly().GetName();
-        string Release;
+        readonly AssemblyName _assemblyName = Assembly.GetExecutingAssembly().GetName();
+        readonly string Release;
 
         const byte msglen = 72;
-        byte[] messageBytes = new byte[msglen];
+        readonly byte[] messageBytes = new byte[msglen];
         byte msgpos = 0;
         bool parsing = false; // true while receiving a message
 
-        readonly byte[] CommandEnableTelemetry = new byte[] { 0x55, 0x92, 0x04, 0x15 };
-        readonly byte[] CommandDisableTelemetry = new byte[] { 0x55, 0x91, 0x04, 0x16 };
+        readonly byte[] CommandEnableTelemetry = [0x55, 0x92, 0x04, 0x15];
+        readonly byte[] CommandDisableTelemetry = [0x55, 0x91, 0x04, 0x16];
 
-        readonly byte[] CommandOperate = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x06, 0x00, 0x1a };
-        readonly byte[] CommandStandby = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x05, 0x00, 0x1b };
-        readonly byte[] CommandOff = new byte[] { 0x55, 0x81, 0x08, 0x02, 0x00, 0x0A, 0x00, 0x16 };
+        readonly byte[] CommandOperate = [ 0x55, 0x81, 0x08, 0x02, 0x00, 0x06, 0x00, 0x1a ];
+        readonly byte[] CommandStandby = [0x55, 0x81, 0x08, 0x02, 0x00, 0x05, 0x00, 0x1b];
+        readonly byte[] CommandOff = [0x55, 0x81, 0x08, 0x02, 0x00, 0x0A, 0x00, 0x16];
 
-        readonly string[] BandName = new string[16] { "?m", "160m", "80m", "40/60m", "30m", "20m",
-            "17m", "15m", "12m", "10m", "6m", "4m", "?m", "?m", "?m", "?m"};
+        readonly string[] BandName = [ "?m", "160m", "80m", "40/60m", "30m", "20m",
+            "17m", "15m", "12m", "10m", "6m", "4m", "?m", "?m", "?m", "?m"];
 
         int PAstatus = 0;
         int PAtemp = 0; // PA temperature
@@ -35,30 +35,30 @@ namespace ACOM_Controller
 
         const int PApowerPeakMemory = 10;
         int PApowerPeakIndex = 0;
-        double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power 
+        readonly double[] PApower = new double[PApowerPeakMemory]; // Array for filtering PA power 
         double PApowerCurrent; // Current PA power
         double PApowerDisplay = 0.0; // Filtered PA output power
         double PApowerDisplayBar = 0.0; // Filtered PA output power, increased by 2% for graphics
 
-        double[] DCpower = new double[PApowerPeakMemory];
+        readonly double[] DCpower = new double[PApowerPeakMemory];
         double DCpowerCurrent;
         double effDisplay = 0.0;
 
         const int DrivePowerPeakMemory = 10;
         int DrivePowerPeakIndex = 0;
-        double[] DrivePower = new double[DrivePowerPeakMemory]; // Array for filtering drive power 
+        readonly double[] DrivePower = new double[DrivePowerPeakMemory]; // Array for filtering drive power 
         double DrivePowerCurrent = 0.0; // Current PA power
         double DrivePowerDisplay = 0.0; // Filtered PA output power
 
         const int ReflectedPowerPeakMemory = 10;
         int ReflectedPowerPeakIndex = 0;
-        double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering reflected power 
+        readonly double[] ReflectedPower = new double[ReflectedPowerPeakMemory]; // Array for filtering reflected power 
         double ReflectedPowerCurrent = 0.0; // Current reflected power
         double ReflectedPowerDisplay = 0.0; // Filtered reflected power
 
         const int swrMemory = 10;
         int swrIndex = 0;
-        double[] swrValue = new double[swrMemory]; // Array for filtering SWR reports
+        readonly double[] swrValue = new double[swrMemory]; // Array for filtering SWR reports
         double swrCurrent = 0.0; // Current SWR
         double swrDisplay = 0.0; // Filtered SWR 
 
@@ -70,7 +70,7 @@ namespace ACOM_Controller
         int TemperatureOffset; // For calculating real temperature
         bool ShowTemperature; // Whether PA shows temperature in digits
         int WarningTemperature; // Temperature at which bar turns red
-        Brush TempLabelColor;
+        readonly Brush TempLabelColor;
 
         int errorCode; // Code for error message shown on PA's display
 
@@ -113,7 +113,7 @@ namespace ACOM_Controller
 
             // Since there is no way to know if telemetry is enabled on PA, 
             // use a periodic timer to constantly re-enable telemetry
-            System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            System.Windows.Threading.DispatcherTimer dispatcherTimer = new();
             dispatcherTimer.Tick += new EventHandler(OnTimer);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
             dispatcherTimer.Start();
@@ -514,47 +514,19 @@ namespace ACOM_Controller
                                         else
                                         { // We have an error or warning condition
                                             errorTextButton.Visibility = Visibility.Visible;
-                                            switch (errorCode)
+                                            errorTextButton.Content = errorCode switch
                                             {
-                                                case 0x00:
-                                                case 0x08:
-                                                    errorTextButton.Content = "Hot switching";
-                                                    break;
-                                                case 0x03:
-                                                    errorTextButton.Content = "Drive power at wrong time";
-                                                    break;
-                                                case 0x04:
-                                                case 0x05:
-                                                    errorTextButton.Content = "Reflected power warning";
-                                                    break;
-                                                case 0x06:
-                                                case 0x07:
-                                                    errorTextButton.Content = "Drive power too high";
-                                                    break;
-                                                case 0x0c:
-                                                    errorTextButton.Content = "RF power at wrong time";
-                                                    break;
-                                                case 0x0e:
-                                                    errorTextButton.Content = "Stop transmission first";
-                                                    break;
-                                                case 0x0f:
-                                                    errorTextButton.Content = "Remove drive power";
-                                                    break;
-                                                case 0x24:
-                                                case 0x25:
-                                                case 0x39:
-                                                case 0x44:
-                                                case 0x45:
-                                                case 0x59:
-                                                    errorTextButton.Content = "Excessive PAM current";
-                                                    break;
-                                                case 0x70:
-                                                    errorTextButton.Content = "CAT error";
-                                                    break;
-                                                default:
-                                                    errorTextButton.Content = "ERROR - See display";
-                                                    break;
-                                            }
+                                                0x00 or 0x08 => "Hot switching",
+                                                0x03 => "Drive power at wrong time",
+                                                0x04 or 0x05 => "Reflected power warning",
+                                                0x06 or 0x07 => "Drive power too high",
+                                                0x0c => "RF power at wrong time",
+                                                0x0e => "Stop transmission first",
+                                                0x0f => "Remove drive power",
+                                                0x24 or 0x25 or 0x39 or 0x44 or 0x45 or 0x59 => "Excessive PAM current",
+                                                0x70 => "CAT error",
+                                                _ => "ERROR - See display",
+                                            };
                                         }
                                     }
                                     else // PA is powering down
@@ -660,7 +632,7 @@ namespace ACOM_Controller
 
         private void StandbyButton_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Config configPanel = new Config(this, Settings.Default.AmplifierModel, Settings.Default.ComPort, Settings.Default.AlwaysOnTop, 
+            Config configPanel = new(this, Settings.Default.AmplifierModel, Settings.Default.ComPort, Settings.Default.AlwaysOnTop, 
                 Settings.Default.NoPopup, Settings.Default.ShowEfficiency, Settings.Default.ShowGain, Settings.Default.ShowSWR);
             configPanel.ShowDialog();
         }

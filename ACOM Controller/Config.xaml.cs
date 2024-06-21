@@ -4,7 +4,7 @@ namespace ACOM_Controller
 {
     public partial class Config : Window
     {
-        MainWindow mainwindow;
+        readonly MainWindow mainwindow;
 
         public Config(MainWindow mw, string model, string port, bool ontop, bool nopopup, bool showEff, bool showGain, bool ShowSWR)
         {
