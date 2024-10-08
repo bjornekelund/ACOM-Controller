@@ -18,4 +18,4 @@ start up if another copy is already running.
 
 The app can, optionally, also display power efficiency, gain, and SWR.
 
-For more information, visit www.sm7iun.se
+For more information, visit [www.sm7iun.se](https://sm7iun.se/station/acom)
